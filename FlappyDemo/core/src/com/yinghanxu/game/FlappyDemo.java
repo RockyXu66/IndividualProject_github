@@ -9,8 +9,8 @@ import com.yinghanxu.game.States.GameStateManager;
 import com.yinghanxu.game.States.MenuState;
 
 public class FlappyDemo extends ApplicationAdapter {
-	public static final int WIDTH = 480;
-	public static final int HEIGHT = 800;
+	public static final int WIDTH = 768;
+	public static final int HEIGHT = 1024;
 
 	public static final String TITLE = "Flappy Bird";
 
@@ -25,9 +25,9 @@ public class FlappyDemo extends ApplicationAdapter {
 		gsm = new GameStateManager();
 		music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
 		music.setLooping(true);
-		music.setVolume(0.1f);	//1f would be 100% volume
+		music.setVolume(0.1f);	// 1 would be 100% volume
 		music.play();
-		Gdx.gl.glClearColor(1, 0, 0, 1);
+		Gdx.gl.glClearColor(1, 1, 1, 1);	//set the background color to be white
 		gsm.push(new MenuState(gsm));
 	}
 

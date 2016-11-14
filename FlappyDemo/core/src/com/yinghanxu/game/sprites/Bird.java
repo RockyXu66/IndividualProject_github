@@ -60,8 +60,8 @@ public class Bird {
         velocity.scl(1 / dt);   //reverse the velocity
         bounds.setPosition(position.x, position.y);
 
-        if (position.y < 256 ) {   // + (texture.getHeight()/2)
-            position.y = 256;
+        if (position.y < 512 ) {   // + (texture.getHeight()/2)
+            position.y = 512;
             //velocity.add(0, -GRAVITY, 0);
             //position.y = -GROUND_Y_OFFSET;// + (texture.getHeight()/2);
         }

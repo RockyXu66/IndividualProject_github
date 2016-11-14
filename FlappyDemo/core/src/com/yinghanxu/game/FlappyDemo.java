@@ -9,8 +9,8 @@ import com.yinghanxu.game.States.GameStateManager;
 import com.yinghanxu.game.States.MenuState;
 
 public class FlappyDemo extends ApplicationAdapter {
-	public static final int WIDTH = 768;
-	public static final int HEIGHT = 1024;
+	public static final int WIDTH = 1080;
+	public static final int HEIGHT = 1920;
 
 	public static final String TITLE = "Flappy Bird";
 

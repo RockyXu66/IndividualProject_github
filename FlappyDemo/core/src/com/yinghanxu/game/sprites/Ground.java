@@ -3,6 +3,7 @@ package com.yinghanxu.game.sprites;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.yinghanxu.game.FlappyDemo;
 
 import java.util.Random;
 
@@ -30,8 +31,9 @@ public class Ground {
         rand = new Random();
         position = new Vector3(x, y, 0);
         //texture = new Texture("groundBlue.png");
-        length = 300 + rand.nextInt(GROUND_MAX_LENGTH);
+        length = 1000;// + rand.nextInt(GROUND_MAX_LENGTH);
         height = 500;
+        texture = new Texture("groundBlue.png");
     }
 
     public Vector3 getPosition(){ return position;}
@@ -40,6 +42,10 @@ public class Ground {
         position.x += positionXYZ.x;
         positionXYZ.y += positionXYZ.y;
         positionXYZ.z += positionXYZ.z;
+    }
+
+    public void reposition(){
+
     }
 
     public Texture getTexture(){ return texture;}

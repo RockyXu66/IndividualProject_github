@@ -18,12 +18,14 @@ import java.util.Random;
 public class PlayState extends State {
     private static final int TUBE_SPACING = 125;    //the spacing from one tube to another tube
     private static final int TUBE_COUNT = 4;        //the tubes' number
+    private static final int GROUND_COUNT = 5;
     //public static final int GROUND_Y_OFFSET = -50; //to make sure the ground is not too high
     private Random rand;
 
     public Bird bird;
 
     private Array<Tube> tubes;
+    private Array<Ground> grounds;
     private Ground ground1, ground2, ground3, ground4, ground5, ground6;
 
     private Vector3 groundPos1, groundPos2, groundPos5;
@@ -54,11 +56,12 @@ public class PlayState extends State {
         ground6.setTexture("groundBlue.png");
 
         groundPos1 = new Vector3(ground1.getPosition().x , 0, 0);
+        groundPos2 = new Vector3(ground2.getPosition().x , 0, 0);
         //groundPos2 = new Vector2(cam.position.x - (cam.viewportWidth/2) -50  + ground1.getLength(), 0);
         groundPos5 = new Vector3(ground5.getPosition().x, 0, 0);
 
         //ground5.getPosition().x - ground1.getPosition().x - 50;//
-        groundLength = ground5.getPosition().x - ground1.getPosition().x - 50;//ground1.getLength() + ground2.getLength() + ground3.getLength() + ground4.getLength() + ground5.getLength() - 50;
+        groundLength = ground1.getLength() + ground2.getLength() + ground3.getLength() + ground4.getLength() + ground5.getLength() - 50;
         System.out.println(ground1.getLength());
         bird = new Bird( 0, ground1.getHeight());
         birdPosition = new Vector3(bird.getPosition().x, ground1.getHeight(), 0);
@@ -71,6 +74,14 @@ public class PlayState extends State {
         for (int i = 1; i <= TUBE_COUNT; i++) {
             tubes.add(new Tube(i * (TUBE_SPACING + Tube.TUBE_WIDTH)));
         }
+
+//        grounds = new Array<Ground>();
+//        for (int i = 1; i <= GROUND_COUNT; i++) {
+//            grounds.add(new Ground(i * (cam.position.x - (cam.viewportWidth / 2) - 50 + 300), 0));
+//            grounds.
+//        }
+
+
     }
 
     @Override
@@ -116,8 +127,12 @@ public class PlayState extends State {
             //sb.draw(tube.getTopTube(), tube.getPosTopTube().x, tube.getPosTopTube().y);
             //sb.draw(tube.getBottomTube(), tube.getPosBottomTube().x, tube.getPosBottomTube().y);
        //}
+
+//        for(Ground ground : grounds ) {
+//            sb.draw(ground.getTexture(), ground.getPosition().x, ground.getPosition().y, ground.getLength(), ground.getHeight());
+//        }
         sb.draw(ground1.getTexture(), groundPos1.x, groundPos1.y, ground1.getLength(), ground1.getHeight());
-        sb.draw(ground2.getTexture(), ground2.getPosition().x, ground2.getPosition().y, ground2.getLength(), ground2.getHeight());
+        sb.draw(ground2.getTexture(), groundPos2.x, groundPos2.y, ground2.getLength(), ground2.getHeight());
         sb.draw(ground3.getTexture(), ground3.getPosition().x, ground3.getPosition().y, ground3.getLength(), ground3.getHeight());
         sb.draw(ground4.getTexture(), ground4.getPosition().x, ground4.getPosition().y, ground4.getLength(), ground4.getHeight());
         sb.draw(ground5.getTexture(), ground5.getPosition().x, ground5.getPosition().y, ground5.getLength(), ground5.getHeight());
@@ -138,6 +153,9 @@ public class PlayState extends State {
         for (Tube tube : tubes) {
             tube.dispose();
         }
+        for (Ground ground : grounds) {
+            ground.dispose();
+        }
         System.out.println("Play State Disposed");
     }
 
@@ -153,7 +171,7 @@ public class PlayState extends State {
            // System.out.println("Orignial location = " + groundPos1.x);
             groundPos1 = new Vector3(groundLength, 0, 0 );
             ground1.setPosition(groundPos1);
-            ground1.setLength(1000 + rand.nextInt(200));
+            //ground1.setLength(1000);
             System.out.println("ground1_length = " + (ground5.getPosition().x - ground1.getPosition().x + ground5.getLength()));
 //            birdPosition = new Vector3((bird.getPosition().x), 700, 0);
 //            bird.setPosition(birdPosition);
@@ -163,7 +181,9 @@ public class PlayState extends State {
             //System.out.println("Orignial location = " + groundPos2.x);
             groundPos2 = new Vector3(groundLength, 0, 0 );
             ground2.setPosition(groundPos2);
-            System.out.println("ground1_length = " + groundLength);
+
+            System.out.println("ground1_location = " + ground1.getPosition().x);
+            System.out.println("ground2_location = " + ground2.getPosition().x);
 //            birdPosition = new Vector3((bird.getPosition().x), 700, 0);
 //            bird.setPosition(birdPosition);
         }

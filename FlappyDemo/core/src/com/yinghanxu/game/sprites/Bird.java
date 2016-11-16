@@ -13,8 +13,8 @@ import com.yinghanxu.game.States.PlayState;
  */
 
 public class Bird {
-    private static final int GRAVITY = -30;
-    private static final int MOVEMENT = 100;
+    private static final int GRAVITY = -10;
+    private static final int MOVEMENT = 400;
     public static final int GROUND_Y_OFFSET = -100;
     private Vector3 position;
     private Vector3 velocity;
@@ -25,9 +25,16 @@ public class Bird {
 
     private Texture bird;
     private PlayState playState;
+    private Ground ground;
 
     public Vector3 getPosition() {
         return position;
+    }
+
+    public void setPosition(Vector3 positionXYZ) {
+        position.x = positionXYZ.x;
+        positionXYZ.y = positionXYZ.y;
+        positionXYZ.z = positionXYZ.z;
     }
 
     public TextureRegion getTexture() {
@@ -48,7 +55,7 @@ public class Bird {
     public void update(float dt) {
         birdAnimation.update(dt);
         if (position.y >= -GROUND_Y_OFFSET + (texture.getHeight()/2) + 40) {
-            velocity.add(0, GRAVITY, 0);
+            velocity.add(0,GRAVITY, 0);
             //position.y = -GROUND_Y_OFFSET + 10;
         }
 
@@ -60,8 +67,8 @@ public class Bird {
         velocity.scl(1 / dt);   //reverse the velocity
         bounds.setPosition(position.x, position.y);
 
-        if (position.y < 512 ) {   // + (texture.getHeight()/2)
-            position.y = 512;
+        if (position.y < 500 ) {   // + (texture.getHeight()/2)
+            position.y = 500;
             //velocity.add(0, -GRAVITY, 0);
             //position.y = -GROUND_Y_OFFSET;// + (texture.getHeight()/2);
         }
@@ -69,7 +76,7 @@ public class Bird {
 
     public void jump() {
         flap.play();    //set the 0.5 volumme
-        velocity.y = 250;
+        velocity.y = 500;
         //velocity.x = 20; //we can c hange the x axes so the bird would fly ahead
     }
 

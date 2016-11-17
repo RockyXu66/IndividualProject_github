@@ -58,8 +58,8 @@ public class PlayState extends State {
         groundPos5 = new Vector3(ground5.getPosition().x, 0, 0);
 
         //ground5.getPosition().x - ground1.getPosition().x - 50;//
-        groundLength = ground5.getPosition().x - ground1.getPosition().x - 50;//ground1.getLength() + ground2.getLength() + ground3.getLength() + ground4.getLength() + ground5.getLength() - 50;
-        System.out.println(ground1.getLength());
+//        groundLength = ground5.getPosition().x - ground1.getPosition().x + ground5.getLength()- 50;//ground1.getLength() + ground2.getLength() + ground3.getLength() + ground4.getLength() + ground5.getLength() - 50;
+        System.out.println("groundLength = " + groundLength);
         bird = new Bird( 0, ground1.getHeight());
         birdPosition = new Vector3(bird.getPosition().x, ground1.getHeight(), 0);
 //      birdPosition.x = bird.getPosition().x;
@@ -98,6 +98,7 @@ public class PlayState extends State {
                 gsm.set(new PlayState(gsm));
             }
         }
+
 //        if (bird.getPosition().y <= ground1.getHeight() + GROUND_Y_OFFSET) {
 //            gsm.set(new PlayState(gsm));
 //        }
@@ -143,30 +144,50 @@ public class PlayState extends State {
 
     private void update_Ground_Bird(){
 
-        System.out.println("cam.x = " + (cam.position.x - (cam.viewportWidth / 2)));
-        System.out.println("ground5.x - bird.x = " + (ground5.getPosition().x - bird.getPosition().x));
+//        System.out.println("cam.x = " + (cam.position.x - (cam.viewportWidth / 2)));
+//        System.out.println("ground5.x - bird.x = " + (ground5.getPosition().x - bird.getPosition().x));
 //        System.out.println("ground1.x = " + ground1.getPosition().x);
 //        System.out.println("ground2.x = " + ground2.getPosition().x);
         //System.out.println("groundPos1.x = " + groundPos1.x);
 
-        if (cam.position.x - (cam.viewportWidth / 2) > ground4.getPosition().x - bird.getPosition().x) {
-           // System.out.println("Orignial location = " + groundPos1.x);
-            groundPos1 = new Vector3(groundLength, 0, 0 );
+//        if (cam.position.x - (cam.viewportWidth / 2) > ground4.getPosition().x - bird.getPosition().x) {
+//           // System.out.println("Orignial location = " + groundPos1.x);
+//            groundPos1 = new Vector3(groundLength, 0, 0 );
+//            ground1.setPosition(groundPos1);
+//            ground1.setLength(1000 + rand.nextInt(200));
+//            System.out.println("ground1_length = " + (ground5.getPosition().x - ground1.getPosition().x + ground5.getLength()));
+////            birdPosition = new Vector3((bird.getPosition().x), 700, 0);
+////            bird.setPosition(birdPosition);
+//        }
+
+        if (cam.position.x - (cam.viewportWidth / 2)  > ground1.getPosition().x + ground1.getLength()) {
+            System.out.println("cam.position.x - (cam.viewportWidth / 2) = " + (int) (cam.position.x - (cam.viewportWidth / 2)));
+            System.out.println("ground1.getPosition().x + ground1.getLength() = " + (int) (ground1.getPosition().x + ground1.getLength()));
+            groundPos1 = new Vector3(ground5.getPosition().x - ground1.getPosition().x + ground5.getLength()- 50, 0, 0 );
             ground1.setPosition(groundPos1);
-            ground1.setLength(1000 + rand.nextInt(200));
-            System.out.println("ground1_length = " + (ground5.getPosition().x - ground1.getPosition().x + ground5.getLength()));
+            ground1.reposition();
+//            ground1.setLength(1000 + rand.nextInt(200));
+//            System.out.println("ground1_length = " + (ground5.getPosition().x - ground1.getPosition().x + ground5.getLength()));
 //            birdPosition = new Vector3((bird.getPosition().x), 700, 0);
 //            bird.setPosition(birdPosition);
         }
 
-        if (cam.position.x - (cam.viewportWidth / 2) > ground5.getPosition().x - bird.getPosition().x) {
-            //System.out.println("Orignial location = " + groundPos2.x);
-            groundPos2 = new Vector3(groundLength, 0, 0 );
-            ground2.setPosition(groundPos2);
-            System.out.println("ground1_length = " + groundLength);
-//            birdPosition = new Vector3((bird.getPosition().x), 700, 0);
-//            bird.setPosition(birdPosition);
+        if (cam.position.x - (cam.viewportWidth / 2)  > ground2.getPosition().x + ground2.getLength()) {
+            System.out.println("cam.position.x - (cam.viewportWidth / 2) = " + (int) (cam.position.x - (cam.viewportWidth / 2)));
+            System.out.println("ground2.getPosition().x + ground2.getLength() = " + (int) (ground2.getPosition().x + ground2.getLength()));
+            groundPos2 = new Vector3(ground1.getPosition().x - ground2.getPosition().x + ground1.getLength()- 50, 0, 0 );
+            ground1.setPosition(groundPos2);
+            ground2.reposition();
         }
+
+//        if (cam.position.x - (cam.viewportWidth / 2) > ground1.getPosition().x + ground1.getLength()) {
+//            //System.out.println("Orignial location = " + groundPos2.x);
+//            groundPos2 = new Vector3(groundLength, 0, 0 );
+//            ground2.setPosition(groundPos2);
+////            System.out.println("ground1_length = " + groundLength);
+////            birdPosition = new Vector3((bird.getPosition().x), 700, 0);
+////            bird.setPosition(birdPosition);
+//        }
         //if (cam.position.x - (cam.viewportWidth / 2) > groundPos2.x + ground2.getWidth()) {
         //    groundPos2.add(ground2.getWidth() * 2, 0);
         //}

@@ -42,6 +42,8 @@ public class Ground {
         positionXYZ.z += positionXYZ.z;
     }
 
+    public void reposition(){ length = 200 + rand.nextInt(800); }
+
     public Texture getTexture(){ return texture;}
 
     public int getLength(){ return length;}

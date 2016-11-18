@@ -138,6 +138,7 @@ public class PlayState extends State {
         sb.draw(ground5.getTexture(), ground5.getPosition().x, ground5.getPosition().y, ground5.getLength(), ground5.getHeight());
         if (gameover) {
             sb.draw(gameoverImg, cam.position.x - gameoverImg.getWidth() / 2, cam.position.y);
+
         }
         sb.end();
     }

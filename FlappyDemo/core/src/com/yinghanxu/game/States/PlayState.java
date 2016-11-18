@@ -26,9 +26,12 @@ public class PlayState extends State {
     public Bird bird;
 
     private Array<Tube> tubes;
-    private Array<Ground> grounds;
     private Ground ground1, ground2, ground3, ground4, ground5, ground6;
 
+    private int allyCount = 0;
+    private float allyPosition = 100;
+    private int currentGroundNum = 1;
+    private Ground nextGround;
     private Vector3 groundPos1, groundPos2, groundPos5;
 
     private float groundLength = 0;
@@ -62,39 +65,44 @@ public class PlayState extends State {
         ground4.setTexture("groundPurple.png");
         ground5.setTexture("groundGrey.png");
 
+        nextGround = ground1;
+
         System.out.println("groundLength = " + groundLength);
         groundLength = ground1.getLength() + ground2.getLength() + ground3.getLength() + ground4.getLength() + ground5.getLength() - 50;
         System.out.println(ground1.getLength());
         bird = new Bird(0, ground1.getHeight());
         birdPosition = new Vector3(bird.getPosition().x, ground1.getHeight(), 0);
         gameover = false;
-        gameoverImg = new Texture("badlogic.jpg");
+        gameoverImg = new Texture("gameover.png");
 //      birdPosition.x = bird.getPosition().x;
 //      birdPosition.y = ground1.getHeight();
 //      birdPosition.z = 0;
 
         tubes = new Array<Tube>();
 
-        for (int i = 1; i <= TUBE_COUNT; i++) {
-            tubes.add(new Tube(i * (TUBE_SPACING + Tube.TUBE_WIDTH)));
-        }
-
+//        for (int i = 1; i <= TUBE_COUNT; i++) {
+//            tubes.add(new Tube(i * (TUBE_SPACING + Tube.TUBE_WIDTH)));
+//        }
+        tubes.add(new Tube(400 + rand.nextInt(400)));
+        tubes.add(new Tube(ground2.getPosition().x + rand.nextInt(ground2.getLength())));
     }
 
     @Override
     protected void handleInput() {
-        if(Gdx.input.isTouched()) {
-            if(gameover)
+        if (Gdx.input.isTouched(0)) {
+            if (gameover)
                 gsm.set(new PlayState(gsm));
             else
                 bird.jump();
         }
+
     }
 
     @Override
     public void update(float dt) {
         handleInput();
         update_Ground_Bird();
+
         bird.update(dt);
         //System.out.println(bird.getPosition().x);
 
@@ -102,15 +110,50 @@ public class PlayState extends State {
         for (int i = 0; i < tubes.size; i++) {
             Tube tube = tubes.get(i);
             //if the tube is left out of the screen then we're going to execute this
-            if (cam.position.x - cam.viewportWidth > tube.getPosTopTube().x + tube.getTopTube().getWidth()) {
-                tube.reposition(tube.getPosTopTube().x + ((Tube.TUBE_WIDTH + TUBE_SPACING) * TUBE_COUNT));
+//            if (cam.position.x - cam.viewportWidth > tube.getPosTopTube().x + tube.getTopTube().getWidth()) {
+////                System.out.println("cam = " + (cam.position.x - (cam.viewportWidth / 2)) + 50);
+////                System.out.println("bird = " + bird.getPosition().x);
+//                tube.reposition(tube.getPosTopTube().x + ((Tube.TUBE_WIDTH + TUBE_SPACING) * TUBE_COUNT));
+//            }
+            if (bird.getPosition().x >=  tube.getPosTopTube().x + tube.getTopTube().getWidth()) {
+                switch (currentGroundNum) {
+                    case 1:
+                        nextGround = ground3;
+                        break;
+                    case 2:
+                        nextGround = ground4;
+                        break;
+                    case 3:
+                        nextGround = ground5;
+                        break;
+                    case 4:
+                        nextGround = ground1;
+                        break;
+                    case 5:
+                        nextGround = ground2;
+                        break;
+                }
+                switch (rand.nextInt(3)) {
+                    case 0:
+                        break;
+                    case 1:
+                        if (nextGround.getLength() > 300) {
+                            tube.reposition(nextGround.getPosition().x + 100 + rand.nextInt(nextGround.getLength() - 100 - tube.getTopTube().getWidth()));
+                        }
+                        break;
+                }
             }
             if (tube.collides(bird.getBounds())) {
-                gsm.set(new PlayState(gsm));
+//                gsm.set(new PlayState(gsm));
+                bird.status = 3;
+                gameover = true;
+                bird.colliding = true;
             }
         }
         if (bird.getPosition().y < ground1.getHeight()) {
             gameover = true;
+            bird.colliding = true;
+            bird.status = 3;
         }
 
 //        if (bird.getPosition().y <= ground1.getHeight() + GROUND_Y_OFFSET) {
@@ -126,10 +169,10 @@ public class PlayState extends State {
 
         sb.draw(bird.getTexture(), bird.getPosition().x, bird.getPosition().y, 70, 200);
 
-        ///for (Tube tube : tubes) {
-        //sb.draw(tube.getTopTube(), tube.getPosTopTube().x, tube.getPosTopTube().y);
-        //sb.draw(tube.getBottomTube(), tube.getPosBottomTube().x, tube.getPosBottomTube().y);
-        //}
+        for (Tube tube : tubes) {
+            sb.draw(tube.getTopTube(), tube.getPosTopTube().x, tube.getPosTopTube().y);
+//        sb.draw(tube.getBottomTube(), tube.getPosBottomTube().x, tube.getPosBottomTube().y);
+        }
 
         sb.draw(ground1.getTexture(), ground1.getPosition().x, ground1.getPosition().y, ground1.getLength(), ground1.getHeight());
         sb.draw(ground2.getTexture(), ground2.getPosition().x, ground2.getPosition().y, ground2.getLength(), ground2.getHeight());
@@ -154,30 +197,39 @@ public class PlayState extends State {
         for (Tube tube : tubes) {
             tube.dispose();
         }
-        for (Ground ground : grounds) {
-            ground.dispose();
-        }
         System.out.println("Play State Disposed");
     }
 
     private void update_Ground_Bird() {
 
+//        if (bird.getPosition().y == 500) {
+//            bird.run();
+//        }
+
+        //Making sure the player would not fall down on the specific ground by setting the player's height
         if (cam.position.x - (cam.viewportWidth / 2) > ground1.getPosition().x) {
             bird.setGroundHeight(ground1.getHeight());
+            //Record which ground the player is staying on.
+            currentGroundNum = 1;
         }
         if (cam.position.x - (cam.viewportWidth / 2) > ground2.getPosition().x) {
             bird.setGroundHeight(ground2.getHeight());
+            currentGroundNum = 2;
         }
         if (cam.position.x - (cam.viewportWidth / 2) > ground3.getPosition().x) {
             bird.setGroundHeight(ground3.getHeight());
+            currentGroundNum = 3;
         }
         if (cam.position.x - (cam.viewportWidth / 2) > ground4.getPosition().x) {
             bird.setGroundHeight(ground4.getHeight());
+            currentGroundNum = 4;
         }
         if (cam.position.x - (cam.viewportWidth / 2) > ground5.getPosition().x) {
             bird.setGroundHeight(ground5.getHeight());
+            currentGroundNum = 5;
         }
 
+        //If the player has pass the current ground, we create the new ground (by computing the whole ground length which includes the ground's gap)
         if (cam.position.x - (cam.viewportWidth / 2) > ground1.getPosition().x + ground1.getLength()) {
             System.out.println("=========  create new ground1  ============");
             System.out.println("cam = " + (cam.position.x - (cam.viewportWidth / 2)));

@@ -1,0 +1,233 @@
+package com.yinghanxu.game.States;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
+import com.yinghanxu.game.FlappyDemo;
+import com.yinghanxu.game.sprites.Bird;
+import com.yinghanxu.game.sprites.Ground;
+import com.yinghanxu.game.sprites.Tube;
+
+import java.util.Random;
+
+/**
+ * Created by 英瀚 on 2016/11/8.
+ */
+
+public class PlayState extends State {
+    private static final int TUBE_SPACING = 125;    //the spacing from one tube to another tube
+    private static final int TUBE_COUNT = 4;        //the tubes' number
+    private static final int GROUND_COUNT = 5;
+    //public static final int GROUND_Y_OFFSET = -50; //to make sure the ground is not too high
+    private Random rand;
+
+    public Bird bird;
+
+    private Array<Tube> tubes;
+    private Array<Ground> grounds;
+    private Ground ground1, ground2, ground3, ground4, ground5, ground6;
+
+    private Vector3 groundPos1, groundPos2, groundPos5;
+
+    private float groundLength = 0;
+    private boolean gameover;
+    private Texture gameoverImg;
+
+    Vector3 birdPosition;
+
+    protected PlayState(GameStateManager gsm) {
+        super(gsm);
+        cam.setToOrtho(false, FlappyDemo.WIDTH, FlappyDemo.HEIGHT); //zoomed up the screen view in order to see the bird clearly
+        //bg = new Texture("bgWhite.png");
+        rand = new Random();
+
+        ground1 = new Ground(cam.position.x - (cam.viewportWidth / 2) - 50, 0);
+        ground1.setLength(1000);
+        ground1.setGroundGap(200);
+        ground2 = new Ground(cam.position.x - (cam.viewportWidth / 2) - 50 + ground1.getLength() + ground1.getGroundGap(), 0);
+        ground3 = new Ground(cam.position.x - (cam.viewportWidth / 2) - 50 + ground1.getLength()
+                + ground2.getLength() + ground1.getGroundGap() + ground2.getGroundGap(), 0);
+        ground4 = new Ground(cam.position.x - (cam.viewportWidth / 2) - 50 + ground1.getLength()
+                + ground2.getLength() + ground3.getLength() + ground1.getGroundGap() + ground2.getGroundGap()
+                + ground3.getGroundGap(), 0);
+        ground5 = new Ground(cam.position.x - (cam.viewportWidth / 2) - 50 + ground1.getLength()
+                + ground2.getLength() + ground3.getLength() + ground4.getLength() + ground1.getGroundGap()
+                + ground2.getGroundGap() + ground3.getGroundGap() + ground4.getGroundGap(), 0);
+
+        ground1.setTexture("groundBlue.png");
+        ground2.setTexture("groundPink.png");
+        ground3.setTexture("groundGreen.png");
+        ground4.setTexture("groundPurple.png");
+        ground5.setTexture("groundGrey.png");
+
+        System.out.println("groundLength = " + groundLength);
+        groundLength = ground1.getLength() + ground2.getLength() + ground3.getLength() + ground4.getLength() + ground5.getLength() - 50;
+        System.out.println(ground1.getLength());
+        bird = new Bird(0, ground1.getHeight());
+        birdPosition = new Vector3(bird.getPosition().x, ground1.getHeight(), 0);
+        gameover = false;
+        gameoverImg = new Texture("badlogic.jpg");
+//      birdPosition.x = bird.getPosition().x;
+//      birdPosition.y = ground1.getHeight();
+//      birdPosition.z = 0;
+
+        tubes = new Array<Tube>();
+
+        for (int i = 1; i <= TUBE_COUNT; i++) {
+            tubes.add(new Tube(i * (TUBE_SPACING + Tube.TUBE_WIDTH)));
+        }
+
+    }
+
+    @Override
+    protected void handleInput() {
+        if(Gdx.input.isTouched()) {
+            if(gameover)
+                gsm.set(new PlayState(gsm));
+            else
+                bird.jump();
+        }
+    }
+
+    @Override
+    public void update(float dt) {
+        handleInput();
+        update_Ground_Bird();
+        bird.update(dt);
+        //System.out.println(bird.getPosition().x);
+
+        cam.position.x = bird.getPosition().x + (cam.viewportWidth / 2) - 50;     //set our camera's position with the flying bird
+        for (int i = 0; i < tubes.size; i++) {
+            Tube tube = tubes.get(i);
+            //if the tube is left out of the screen then we're going to execute this
+            if (cam.position.x - cam.viewportWidth > tube.getPosTopTube().x + tube.getTopTube().getWidth()) {
+                tube.reposition(tube.getPosTopTube().x + ((Tube.TUBE_WIDTH + TUBE_SPACING) * TUBE_COUNT));
+            }
+            if (tube.collides(bird.getBounds())) {
+                gsm.set(new PlayState(gsm));
+            }
+        }
+        if (bird.getPosition().y < ground1.getHeight()) {
+            gameover = true;
+        }
+
+//        if (bird.getPosition().y <= ground1.getHeight() + GROUND_Y_OFFSET) {
+//            gsm.set(new PlayState(gsm));
+//        }
+        cam.update();   //this will tell lib gdx the camera has been repositioned
+    }
+
+    @Override
+    public void render(SpriteBatch sb) {
+        sb.setProjectionMatrix(cam.combined); //put the camera in the world view
+        sb.begin(); //open rendering box off
+
+        sb.draw(bird.getTexture(), bird.getPosition().x, bird.getPosition().y, 70, 200);
+
+        ///for (Tube tube : tubes) {
+        //sb.draw(tube.getTopTube(), tube.getPosTopTube().x, tube.getPosTopTube().y);
+        //sb.draw(tube.getBottomTube(), tube.getPosBottomTube().x, tube.getPosBottomTube().y);
+        //}
+
+        sb.draw(ground1.getTexture(), ground1.getPosition().x, ground1.getPosition().y, ground1.getLength(), ground1.getHeight());
+        sb.draw(ground2.getTexture(), ground2.getPosition().x, ground2.getPosition().y, ground2.getLength(), ground2.getHeight());
+        sb.draw(ground3.getTexture(), ground3.getPosition().x, ground3.getPosition().y, ground3.getLength(), ground3.getHeight());
+        sb.draw(ground4.getTexture(), ground4.getPosition().x, ground4.getPosition().y, ground4.getLength(), ground4.getHeight());
+        sb.draw(ground5.getTexture(), ground5.getPosition().x, ground5.getPosition().y, ground5.getLength(), ground5.getHeight());
+        if (gameover) {
+            sb.draw(gameoverImg, cam.position.x - gameoverImg.getWidth() / 2, cam.position.y);
+        }
+        sb.end();
+    }
+
+    @Override
+    public void dispose() {
+        ground1.dispose();
+        ground2.dispose();
+        ground3.dispose();
+        ground4.dispose();
+        ground5.dispose();
+        bird.dispose();
+        for (Tube tube : tubes) {
+            tube.dispose();
+        }
+        for (Ground ground : grounds) {
+            ground.dispose();
+        }
+        System.out.println("Play State Disposed");
+    }
+
+    private void update_Ground_Bird() {
+
+        if (cam.position.x - (cam.viewportWidth / 2) > ground1.getPosition().x) {
+            bird.setGroundHeight(ground1.getHeight());
+        }
+        if (cam.position.x - (cam.viewportWidth / 2) > ground2.getPosition().x) {
+            bird.setGroundHeight(ground2.getHeight());
+        }
+        if (cam.position.x - (cam.viewportWidth / 2) > ground3.getPosition().x) {
+            bird.setGroundHeight(ground3.getHeight());
+        }
+        if (cam.position.x - (cam.viewportWidth / 2) > ground4.getPosition().x) {
+            bird.setGroundHeight(ground4.getHeight());
+        }
+        if (cam.position.x - (cam.viewportWidth / 2) > ground5.getPosition().x) {
+            bird.setGroundHeight(ground5.getHeight());
+        }
+
+        if (cam.position.x - (cam.viewportWidth / 2) > ground1.getPosition().x + ground1.getLength()) {
+            System.out.println("=========  create new ground1  ============");
+            System.out.println("cam = " + (cam.position.x - (cam.viewportWidth / 2)));
+            System.out.println("bird = " + bird.getPosition().x);
+
+            ground1.setPosition(ground5.getPosition().x - ground1.getPosition().x + ground5.getLength() + ground5.getGroundGap(), 0, 0);
+            ground1.reposition();
+
+            bird.setGroundHeight(0);
+
+            System.out.println("new length of ground1 = " + ground1.getLength());
+        }
+
+        if (cam.position.x - (cam.viewportWidth / 2) > ground2.getPosition().x + ground2.getLength()) {
+            System.out.println("=========  create new ground2  ============");
+            ground2.setPosition(ground1.getPosition().x - ground2.getPosition().x + ground1.getLength() + ground1.getGroundGap(), 0, 0);
+            ground2.reposition();
+            bird.setGroundHeight(0);
+            System.out.println("new length of ground2 = " + ground2.getLength());
+            //if (cam.position.x - (cam.viewportWidth / 2) > groundPos2.x + ground2.getWidth()) {
+            //    groundPos2.add(ground2.getWidth() * 2, 0);
+            //}
+        }
+        if (cam.position.x - (cam.viewportWidth / 2) > ground3.getPosition().x + ground3.getLength()) {
+            System.out.println("=========  create new ground3  ============");
+            ground3.setPosition(ground2.getPosition().x - ground3.getPosition().x + ground2.getLength() + ground2.getGroundGap(), 0, 0);
+            ground3.reposition();
+            bird.setGroundHeight(0);
+            System.out.println("new length of ground1 = " + ground3.getLength());
+        }
+        if (cam.position.x - (cam.viewportWidth / 2) > ground4.getPosition().x + ground4.getLength()) {
+            System.out.println("=========  create new ground4  ============");
+            ground4.setPosition(ground3.getPosition().x - ground4.getPosition().x + ground3.getLength() + ground3.getGroundGap(), 0, 0);
+            ground4.reposition();
+            bird.setGroundHeight(0);
+            System.out.println("new length of ground4 = " + ground4.getLength());
+        }
+        if (cam.position.x - (cam.viewportWidth / 2) > ground5.getPosition().x + ground5.getLength()) {
+            System.out.println("=========  create new ground5  ============");
+            ground5.setPosition(ground4.getPosition().x - ground5.getPosition().x + ground4.getLength() + ground4.getGroundGap(), 0, 0);
+            ground5.reposition();
+            bird.setGroundHeight(0);
+            System.out.println("new length of ground1 = " + ground5.getLength());
+        }
+
+//        if (cam.position.x - (cam.viewportWidth / 2) > ground3.getPosition().x + ground3.getLength()) {
+//            System.out.println("create new ground3=====================");
+//            groundPos1 = new Vector3(ground5.getPosition().x - ground1.getPosition().x + ground5.getLength(), 0, 0);
+//            ground1.setPosition(groundPos1);
+//            ground1.reposition();
+//        }
+    }
+}
+

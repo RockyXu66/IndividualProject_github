@@ -22,6 +22,7 @@ public class Bird {
     private Animation birdAnimation;
     public Texture texture;
     private Sound flap;
+    private int groundHeight = 500;
 
     private Texture bird;
     private PlayState playState;
@@ -67,11 +68,12 @@ public class Bird {
         velocity.scl(1 / dt);   //reverse the velocity
         bounds.setPosition(position.x, position.y);
 
-        if (position.y < 500 ) {   // + (texture.getHeight()/2)
+        if (position.y < groundHeight ) {   // + (texture.getHeight()/2)
             position.y = 500;
             //velocity.add(0, -GRAVITY, 0);
             //position.y = -GROUND_Y_OFFSET;// + (texture.getHeight()/2);
         }
+
     }
 
     public void jump() {
@@ -83,6 +85,8 @@ public class Bird {
     public Rectangle getBounds() {
         return bounds;
     }
+
+    public void setGroundHeight(int groundHeight) { this.groundHeight = groundHeight; }
 
     public void dispose(){
         texture.dispose();

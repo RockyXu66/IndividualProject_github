@@ -58,8 +58,8 @@ public class Bird {
         //bird = new Texture("bird.png");
         texture = new Texture("player.png");
         birdAnimationRun = new Animation(new TextureRegion(texture), 3, 0.5f);
-        birdAnimationJump = new Animation(new TextureRegion(texture), 3, 0.1f);
-        birdAnimationCollide = new Animation(new TextureRegion(texture), 3, 0.1f);
+        birdAnimationJump = new Animation(new TextureRegion(texture), 3, 0.5f);
+        birdAnimationCollide = new Animation(new TextureRegion(texture), 3, 0.5f);
         bounds = new Rectangle(x, y, texture.getWidth() / 3, texture.getHeight());
         flap = Gdx.audio.newSound(Gdx.files.internal("sfx_wing.ogg"));
         colliding = false;
@@ -108,7 +108,7 @@ public class Bird {
         flap.play();    //set the 0.5 volumme
         velocity.y = 500;
         status = 2;
-        birdAnimationJump = new Animation(new TextureRegion(texture), 3, 0.1f);
+        birdAnimationJump = new Animation(new TextureRegion(texture), 3, 0.5f);
         //velocity.x = 20; //we can change the x axes so the bird would fly ahead
     }
 

@@ -33,8 +33,8 @@ public class Ground {
         rand = new Random();
         position = new Vector3(x, y, 0);
         length = 400 + rand.nextInt(GROUND_MAX_LENGTH);
-        height = 500;
-        groundGap = 100 + rand.nextInt(GROUND_MAX_GAP);
+        height = 700;
+        groundGap = 200 + rand.nextInt(GROUND_MAX_GAP);
     }
 
     public Vector3 getPosition(){ return position;}
@@ -46,7 +46,7 @@ public class Ground {
     }
 
     public void reposition(){
-        length = 200 + rand.nextInt(800);
+        length = 400 + rand.nextInt(800);
         groundGap = 100 + rand.nextInt(GROUND_MAX_GAP);
         switch (rand.nextInt(6)) {
             case 1:

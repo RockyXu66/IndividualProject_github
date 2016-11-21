@@ -13,7 +13,7 @@ import com.yinghanxu.game.States.PlayState;
  */
 
 public class Bird {
-    private static final int GRAVITY = -10;
+    private static final int GRAVITY = -40;
     private static final int MOVEMENT = 400;
     public static final int GROUND_Y_OFFSET = -100;
     private Vector3 position;
@@ -24,7 +24,7 @@ public class Bird {
     private Animation birdAnimationCollide;
     public Texture texture;
     private Sound flap;
-    private int groundHeight = 500;
+    private int groundHeight = 700;
 
     private Texture bird;
     private PlayState playState;
@@ -57,10 +57,10 @@ public class Bird {
         velocity = new Vector3(0, 0, 0);
         //bird = new Texture("bird.png");
         texture = new Texture("player.png");
-        birdAnimationRun = new Animation(new TextureRegion(texture), 3, 0.5f);
-        birdAnimationJump = new Animation(new TextureRegion(texture), 3, 0.1f);
-        birdAnimationCollide = new Animation(new TextureRegion(texture), 3, 0.1f);
-        bounds = new Rectangle(x, y, texture.getWidth() / 3 , texture.getHeight());
+        birdAnimationRun = new Animation(new TextureRegion(texture), 14, 0.5f);
+        birdAnimationJump = new Animation(new TextureRegion(texture), 14, 0.1f);
+        birdAnimationCollide = new Animation(new TextureRegion(texture), 14, 0.1f);
+        bounds = new Rectangle(x, y, texture.getWidth() / 14 , texture.getHeight());
         flap = Gdx.audio.newSound(Gdx.files.internal("sfx_wing.ogg"));
         colliding = false;
     }
@@ -94,7 +94,7 @@ public class Bird {
         bounds.setPosition(position.x, position.y);
 
         if (position.y < groundHeight ) {   // + (texture.getHeight()/2)
-            position.y = 500;
+            position.y = 700;
             //velocity.add(0, -GRAVITY, 0);
             //position.y = -GROUND_Y_OFFSET;// + (texture.getHeight()/2);
         }
@@ -106,9 +106,9 @@ public class Bird {
 
     public void jump() {
         flap.play();    //set the 0.5 volumme
-        velocity.y = 500;
+        velocity.y = 1000;
         status = 2;
-        birdAnimationJump = new Animation(new TextureRegion(texture), 3, 0.1f);
+        birdAnimationJump = new Animation(new TextureRegion(texture), 14, 0.1f);
         //velocity.x = 20; //we can change the x axes so the bird would fly ahead
     }
 

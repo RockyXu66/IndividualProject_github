@@ -167,7 +167,7 @@ public class PlayState extends State {
         sb.setProjectionMatrix(cam.combined); //put the camera in the world view
         sb.begin(); //open rendering box off
 
-        sb.draw(bird.getTexture(), bird.getPosition().x, bird.getPosition().y, 70, 200);
+        sb.draw(bird.getTexture(), bird.getPosition().x, bird.getPosition().y);
 
         for (Tube tube : tubes) {
             sb.draw(tube.getTopTube(), tube.getPosTopTube().x, tube.getPosTopTube().y);

@@ -1,6 +1,7 @@
 package com.yinghanxu.game.States;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
@@ -16,7 +17,7 @@ import java.util.Random;
  * Created by 英瀚 on 2016/11/8.
  */
 
-public class PlayState extends State {
+public class PlayState extends State implements InputProcessor{
     private static final int TUBE_SPACING = 125;    //the spacing from one tube to another tube
     private static final int TUBE_COUNT = 4;        //the tubes' number
     private static final int GROUND_COUNT = 5;
@@ -85,17 +86,20 @@ public class PlayState extends State {
 //        }
         tubes.add(new Tube(600 + rand.nextInt(400)));
         tubes.add(new Tube(ground2.getPosition().x + rand.nextInt(ground2.getLength())));
+
+        Gdx.input.setInputProcessor(this);
     }
 
-//    public void onTouchEvent(MotionEvent )
     @Override
     protected void handleInput() {
         if (Gdx.input.isTouched(0)) {
             if (gameover)
                 gsm.set(new PlayState(gsm));
-            else
+            //touch left screen to jump & touch right screen to wave the sword
+            else if(Gdx.input.getX() < Gdx.graphics.getWidth() / 2) //capture the screen touch's X position
                 bird.jump();
         }
+        //System.out.println("The coordinate you point = " + Gdx.input.getX());
 
     }
 //    public boolean onTouchEvent()
@@ -319,6 +323,47 @@ public class PlayState extends State {
 //            ground1.setPosition(groundPos1);
 //            ground1.reposition();
 //        }
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        return false;
     }
 }
 

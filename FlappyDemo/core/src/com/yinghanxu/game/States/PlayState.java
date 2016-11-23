@@ -17,7 +17,7 @@ import java.util.Random;
  * Created by 英瀚 on 2016/11/8.
  */
 
-public class PlayState extends State implements InputProcessor{
+public class PlayState extends State{
     private static final int TUBE_SPACING = 125;    //the spacing from one tube to another tube
     private static final int TUBE_COUNT = 4;        //the tubes' number
     private static final int GROUND_COUNT = 5;
@@ -87,7 +87,6 @@ public class PlayState extends State implements InputProcessor{
         tubes.add(new Tube(600 + rand.nextInt(400)));
         tubes.add(new Tube(ground2.getPosition().x + rand.nextInt(ground2.getLength())));
 
-        Gdx.input.setInputProcessor(this);
     }
 
     @Override
@@ -157,15 +156,6 @@ public class PlayState extends State implements InputProcessor{
                 bird.colliding = true;
             }
         }
-//        if (bird.getPosition().y < ground1.getHeight()) {
-//            gameover = true;
-//            bird.colliding = true;
-//            bird.status = 3;
-//        }
-
-//        if (bird.getPosition().y <= ground1.getHeight() + GROUND_Y_OFFSET) {
-//            gsm.set(new PlayState(gsm));
-//        }
         cam.update();   //this will tell lib gdx the camera has been repositioned
     }
 
@@ -325,45 +315,5 @@ public class PlayState extends State implements InputProcessor{
 //        }
     }
 
-    @Override
-    public boolean keyDown(int keycode) {
-        return false;
-    }
-
-    @Override
-    public boolean keyUp(int keycode) {
-        return false;
-    }
-
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-
-        return false;
-    }
-
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-
-    @Override
-    public boolean scrolled(int amount) {
-        return false;
-    }
 }
 

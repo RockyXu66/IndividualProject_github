@@ -28,6 +28,7 @@ public class PlayState extends State{
 
     private Array<Tube> tubes;
     private Ground ground1, ground2, ground3, ground4, ground5, ground6;
+    private Array<Ground> grounds;
 
     private int allyCount = 0;
     private float allyPosition = 100;
@@ -65,6 +66,13 @@ public class PlayState extends State{
         ground3.setTexture("groundGreen.png");
         ground4.setTexture("groundPurple.png");
         ground5.setTexture("groundGrey.png");
+
+        grounds = new Array<Ground>();
+        grounds.add(ground1);
+        grounds.add(ground2);
+        grounds.add(ground3);
+        grounds.add(ground4);
+        grounds.add(ground5);
 
         nextGround = ground1;
 
@@ -171,11 +179,9 @@ public class PlayState extends State{
 //        sb.draw(tube.getBottomTube(), tube.getPosBottomTube().x, tube.getPosBottomTube().y);
         }
 
-        sb.draw(ground1.getTexture(), ground1.getPosition().x, ground1.getPosition().y, ground1.getLength(), ground1.getHeight());
-        sb.draw(ground2.getTexture(), ground2.getPosition().x, ground2.getPosition().y, ground2.getLength(), ground2.getHeight());
-        sb.draw(ground3.getTexture(), ground3.getPosition().x, ground3.getPosition().y, ground3.getLength(), ground3.getHeight());
-        sb.draw(ground4.getTexture(), ground4.getPosition().x, ground4.getPosition().y, ground4.getLength(), ground4.getHeight());
-        sb.draw(ground5.getTexture(), ground5.getPosition().x, ground5.getPosition().y, ground5.getLength(), ground5.getHeight());
+        for(Ground ground : grounds) {
+            sb.draw(ground.getTexture(), ground.getPosition().x, ground.getPosition().y, ground.getLength(), ground.getHeight());
+        }
         if (gameover) {
             sb.draw(gameoverImg, cam.position.x - gameoverImg.getWidth() / 2, cam.position.y);
 
@@ -203,13 +209,14 @@ public class PlayState extends State{
 //            bird.run();
 //        }
 
+        float birdPositionX = bird.getPosition().x + (bird.getTexture().getRegionWidth()/14);
         //Making sure the player would not fall down on the specific ground by setting the player's height
-        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/14)> ground1.getPosition().x) {
+        if (birdPositionX> ground1.getPosition().x) {
             bird.setGroundHeight(ground1.getHeight());
             //Record which ground the player is staying on.
             currentGroundNum = 1;
         }
-        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/14) > ground2.getPosition().x) {
+        if (birdPositionX > ground2.getPosition().x) {
             bird.setGroundHeight(ground2.getHeight());
             currentGroundNum = 2;
         }
@@ -292,7 +299,7 @@ public class PlayState extends State{
             ground4.reposition();
         }
 
-        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/3) > ground5.getPosition().x + ground5.getLength()) {
+        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/14) > ground5.getPosition().x + ground5.getLength()) {
             System.out.println("=========  create new ground5  ============");
             if (bird.getPosition().y < ground1.getHeight()) {
                 gameover = true;
@@ -306,13 +313,6 @@ public class PlayState extends State{
             ground5.setPosition(ground4.getPosition().x - ground5.getPosition().x + ground4.getLength() + ground4.getGroundGap(), 0, 0);
             ground5.reposition();
         }
-
-//        if (cam.position.x - (cam.viewportWidth / 2) > ground3.getPosition().x + ground3.getLength()) {
-//            System.out.println("create new ground3=====================");
-//            groundPos1 = new Vector3(ground5.getPosition().x - ground1.getPosition().x + ground5.getLength(), 0, 0);
-//            ground1.setPosition(groundPos1);
-//            ground1.reposition();
-//        }
     }
 
 }

@@ -179,6 +179,7 @@ public class PlayState extends State{
 //        sb.draw(tube.getBottomTube(), tube.getPosBottomTube().x, tube.getPosBottomTube().y);
         }
 
+        //draw the gorunds in the screen
         for(Ground ground : grounds) {
             sb.draw(ground.getTexture(), ground.getPosition().x, ground.getPosition().y, ground.getLength(), ground.getHeight());
         }
@@ -191,11 +192,15 @@ public class PlayState extends State{
 
     @Override
     public void dispose() {
-        ground1.dispose();
-        ground2.dispose();
-        ground3.dispose();
-        ground4.dispose();
-        ground5.dispose();
+        //Dispose the grounds
+        for (Ground ground : grounds) {
+            ground.dispose();
+        }
+//        ground1.dispose();
+//        ground2.dispose();
+//        ground3.dispose();
+//        ground4.dispose();
+//        ground5.dispose();
         bird.dispose();
         for (Tube tube : tubes) {
             tube.dispose();
@@ -211,6 +216,13 @@ public class PlayState extends State{
 
         float birdPositionX = bird.getPosition().x + (bird.getTexture().getRegionWidth()/14);
         //Making sure the player would not fall down on the specific ground by setting the player's height
+//        for (Ground ground : grounds) {
+//            if (birdPositionX > ground.getPosition().x) {
+//                bird.setGroundHeight(ground.getHeight());
+//
+//                currentGroundNum =
+//            }
+//        }
         if (birdPositionX> ground1.getPosition().x) {
             bird.setGroundHeight(ground1.getHeight());
             //Record which ground the player is staying on.

@@ -39,6 +39,7 @@ public class PlayState extends State{
     private float groundLength = 0;
     private boolean gameover;
     private Texture gameoverImg;
+    private int playerFrameNum = 15;
 
     Vector3 birdPosition;
 
@@ -148,7 +149,7 @@ public class PlayState extends State{
                 }
                 switch (rand.nextInt(3)) {
                     case 0:
-                        break;
+
                     case 1:
                         //Make sure the new ally is not relocated in a short ground
                         if (nextGround.getLength() > 500) {
@@ -214,7 +215,7 @@ public class PlayState extends State{
 //            bird.run();
 //        }
 
-        float birdPositionX = bird.getPosition().x + (bird.getTexture().getRegionWidth()/14);
+        float birdPositionX = bird.getPosition().x + (bird.getTexture().getRegionWidth()/playerFrameNum);
         //Making sure the player would not fall down on the specific ground by setting the player's height
 //        for (Ground ground : grounds) {
 //            if (birdPositionX > ground.getPosition().x) {
@@ -232,21 +233,21 @@ public class PlayState extends State{
             bird.setGroundHeight(ground2.getHeight());
             currentGroundNum = 2;
         }
-        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/14) > ground3.getPosition().x) {
+        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/playerFrameNum) > ground3.getPosition().x) {
             bird.setGroundHeight(ground3.getHeight());
             currentGroundNum = 3;
         }
-        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/14) > ground4.getPosition().x) {
+        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/playerFrameNum) > ground4.getPosition().x) {
             bird.setGroundHeight(ground4.getHeight());
             currentGroundNum = 4;
         }
-        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/14) > ground5.getPosition().x) {
+        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/playerFrameNum) > ground5.getPosition().x) {
             bird.setGroundHeight(ground5.getHeight());
             currentGroundNum = 5;
         }
 
         //If the player has pass the current ground, we create the new ground (by computing the whole ground length which includes the ground's gap)
-        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/14) > ground1.getPosition().x + ground1.getLength()) {
+        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/playerFrameNum) > ground1.getPosition().x + ground1.getLength()) {
             System.out.println("=========  create new ground1  ============");
             System.out.println("cam = " + (cam.position.x - (cam.viewportWidth / 2)));
             System.out.println("bird = " + bird.getPosition().x);
@@ -258,12 +259,12 @@ public class PlayState extends State{
             bird.setGroundHeight(0);
             System.out.println("new length of ground1 = " + ground1.getLength());
         }
-        if (bird.getPosition().x - (bird.getTexture().getRegionWidth()/14) > ground1.getPosition().x + ground1.getLength()) {
+        if (bird.getPosition().x - (bird.getTexture().getRegionWidth()/playerFrameNum) > ground1.getPosition().x + ground1.getLength()) {
             ground1.setPosition(ground5.getPosition().x - ground1.getPosition().x + ground5.getLength() + ground5.getGroundGap(), 0, 0);
             ground1.reposition();
         }
 
-        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/14) > ground2.getPosition().x + ground2.getLength()) {
+        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/playerFrameNum) > ground2.getPosition().x + ground2.getLength()) {
             System.out.println("=========  create new ground2  ============");
             if (bird.getPosition().y < ground1.getHeight()) {
                 gameover = true;
@@ -276,12 +277,12 @@ public class PlayState extends State{
             //    groundPos2.add(ground2.getWidth() * 2, 0);
             //}
         }
-        if (bird.getPosition().x - (bird.getTexture().getRegionWidth()/14) > ground2.getPosition().x + ground2.getLength()) {
+        if (bird.getPosition().x - (bird.getTexture().getRegionWidth()/playerFrameNum) > ground2.getPosition().x + ground2.getLength()) {
             ground2.setPosition(ground1.getPosition().x - ground2.getPosition().x + ground1.getLength() + ground1.getGroundGap(), 0, 0);
             ground2.reposition();
         }
 
-        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/14) > ground3.getPosition().x + ground3.getLength()) {
+        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/playerFrameNum) > ground3.getPosition().x + ground3.getLength()) {
             System.out.println("=========  create new ground3  ============");
             if (bird.getPosition().y < ground1.getHeight()) {
                 gameover = true;
@@ -291,12 +292,12 @@ public class PlayState extends State{
             bird.setGroundHeight(0);
             System.out.println("new length of ground1 = " + ground3.getLength());
         }
-        if (bird.getPosition().x - (bird.getTexture().getRegionWidth()/14) > ground3.getPosition().x + ground3.getLength()) {
+        if (bird.getPosition().x - (bird.getTexture().getRegionWidth()/playerFrameNum) > ground3.getPosition().x + ground3.getLength()) {
             ground3.setPosition(ground2.getPosition().x - ground3.getPosition().x + ground2.getLength() + ground2.getGroundGap(), 0, 0);
             ground3.reposition();
         }
 
-        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/14) > ground4.getPosition().x + ground4.getLength()) {
+        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/playerFrameNum) > ground4.getPosition().x + ground4.getLength()) {
             System.out.println("=========  create new ground4  ============");
             if (bird.getPosition().y < ground1.getHeight()) {
                 gameover = true;
@@ -306,12 +307,12 @@ public class PlayState extends State{
             bird.setGroundHeight(0);
             System.out.println("new length of ground4 = " + ground4.getLength());
         }
-        if (bird.getPosition().x - (bird.getTexture().getRegionWidth()/14) > ground4.getPosition().x + ground4.getLength()) {
+        if (bird.getPosition().x - (bird.getTexture().getRegionWidth()/playerFrameNum) > ground4.getPosition().x + ground4.getLength()) {
             ground4.setPosition(ground3.getPosition().x - ground4.getPosition().x + ground3.getLength() + ground3.getGroundGap(), 0, 0);
             ground4.reposition();
         }
 
-        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/14) > ground5.getPosition().x + ground5.getLength()) {
+        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/playerFrameNum) > ground5.getPosition().x + ground5.getLength()) {
             System.out.println("=========  create new ground5  ============");
             if (bird.getPosition().y < ground1.getHeight()) {
                 gameover = true;
@@ -321,7 +322,7 @@ public class PlayState extends State{
             bird.setGroundHeight(0);
             System.out.println("new length of ground1 = " + ground5.getLength());
         }
-        if (bird.getPosition().x - (bird.getTexture().getRegionWidth()/14) > ground5.getPosition().x + ground5.getLength()) {
+        if (bird.getPosition().x - (bird.getTexture().getRegionWidth()/playerFrameNum) > ground5.getPosition().x + ground5.getLength()) {
             ground5.setPosition(ground4.getPosition().x - ground5.getPosition().x + ground4.getLength() + ground4.getGroundGap(), 0, 0);
             ground5.reposition();
         }

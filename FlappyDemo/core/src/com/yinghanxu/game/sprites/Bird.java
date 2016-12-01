@@ -14,7 +14,7 @@ import com.yinghanxu.game.States.PlayState;
 
 public class Bird {
     private static final int GRAVITY = -40;
-    private static final int MOVEMENT = 400;
+    private static final int MOVEMENT = 500;
     public static final int GROUND_Y_OFFSET = -100;
     private Vector3 position;
     private Vector3 velocity;
@@ -23,6 +23,7 @@ public class Bird {
     private Animation birdAnimationJump;
     private Animation birdAnimationCollide;
     public Texture texture, textureJump;
+    private int jumpFrameNum, runFrameNum;
     private Sound flap;
     private int groundHeight = 700;
 
@@ -107,9 +108,9 @@ public class Bird {
 
     public void jump() {
         flap.play();    //set the 0.5 volumme
-        velocity.y = 1000;
+        velocity.y = 1200;
         status = 2;
-        birdAnimationJump = new Animation(new TextureRegion(texture), 17, 0.8f);
+        birdAnimationJump = new Animation(new TextureRegion(textureJump), 17, 0.8f);
         //velocity.x = 20; //we can change the x axes so the bird would fly ahead
     }
 

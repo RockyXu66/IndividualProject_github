@@ -23,9 +23,10 @@ public class Bird {
     private Animation birdAnimationJump;
     private Animation birdAnimationCollide;
     public Texture texture, textureJump;
-    private int jumpFrameNum = 20, runFrameNum = 15;
+    private int jumpFrameNum = 20, runFrameNum = 20;
     private Sound flap;
     private int groundHeight = 700;
+    public int touchCount = 1;
 
     private Texture bird;
     private PlayState playState;
@@ -36,14 +37,15 @@ public class Bird {
         return position;
     }
 
-    public void setPosition(Vector3 positionXYZ) {
-        position.x = positionXYZ.x;
-        positionXYZ.y = positionXYZ.y;
-        positionXYZ.z = positionXYZ.z;
+    public void setPositionY(float y) {
+        //position.x = positionXYZ.x;
+        position.y = y;
+        //positionXYZ.z = positionXYZ.z;
     }
 
     public TextureRegion getTexture() {
         if (status == 1) {
+            touchCount = 1;
             return birdAnimationRun.getFrame();
         } else if (status == 2) {
             return birdAnimationJump.getFrame();
@@ -59,7 +61,7 @@ public class Bird {
         //bird = new Texture("bird.png");
         texture = new Texture("player.png");
         textureJump = new Texture("1130jump.png");
-        birdAnimationRun = new Animation(new TextureRegion(texture), runFrameNum, 0.8f);
+        birdAnimationRun = new Animation(new TextureRegion(texture), runFrameNum, 0.5f);
         birdAnimationJump = new Animation(new TextureRegion(textureJump), jumpFrameNum, 0.8f);
         birdAnimationCollide = new Animation(new TextureRegion(texture), runFrameNum, 0.1f);
         bounds = new Rectangle(x, y, texture.getWidth() / runFrameNum , texture.getHeight());
@@ -76,19 +78,14 @@ public class Bird {
         } else if (status ==3) {
             birdAnimationCollide.update(dt);
         }
-//        if (position.y >= -GROUND_Y_OFFSET + (texture.getHeight()/2) + 40) {
-//            velocity.add(0,GRAVITY, 0);
-//            //position.y = -GROUND_Y_OFFSET + 10;
-//        }
+
         velocity.add(0, GRAVITY, 0);
 
         velocity.scl(dt);   //multiply everything by delta time---scale. Otherwise the bird will move too fast to see.
-//        position.add(MOVEMENT * dt, velocity.y, 0);
         if (!colliding) {
             position.add(MOVEMENT * dt, velocity.y, 0);
-        }else{
-//            position.y = 0;
         }
+
         if (position.y < 0) {
             position.y = 0;
         }
@@ -97,8 +94,6 @@ public class Bird {
 
         if (position.y < groundHeight ) {   // + (texture.getHeight()/2)
             position.y = 700;
-            //velocity.add(0, -GRAVITY, 0);
-            //position.y = -GROUND_Y_OFFSET;// + (texture.getHeight()/2);
         }
 
         if (position.y == groundHeight) {
@@ -119,6 +114,12 @@ public class Bird {
     }
 
     public void setGroundHeight(int groundHeight) { this.groundHeight = groundHeight; }
+
+    public float getGroundHeight() { return groundHeight;}
+
+    public void setTouchCount(int i) {this.touchCount = i; }
+
+    public int getTouchCount() { return touchCount; }
 
     public void dispose(){
         texture.dispose();

@@ -39,7 +39,7 @@ public class PlayState extends State{
     private float groundLength = 0;
     private boolean gameover;
     private Texture gameoverImg;
-    private int playerFrameNum = 15;
+    private int playerFrameNum = 2;
 
     Vector3 birdPosition;
 
@@ -100,17 +100,24 @@ public class PlayState extends State{
 
     @Override
     protected void handleInput() {
-        if (Gdx.input.isTouched(0)) {
-            if (gameover)
+        if (Gdx.input.justTouched()) {
+            if (gameover) {
                 gsm.set(new PlayState(gsm));
+            }
             //touch left screen to jump & touch right screen to wave the sword
-            else if(Gdx.input.getX() < Gdx.graphics.getWidth() / 2) //capture the screen touch's X position
-                bird.jump();
+            else{
+                if (Gdx.input.getX() < Gdx.graphics.getWidth() / 2 && bird.getTouchCount() ==1) {//capture the screen touch's X position
+                    bird.jump();
+                    bird.setTouchCount(2);
+                }
+                else if(Gdx.input.getX() < Gdx.graphics.getWidth() / 2 && bird.getTouchCount() ==2){
+                    bird.jump();
+                    bird.setTouchCount(3);
+                }
+            }
         }
-        //System.out.println("The coordinate you point = " + Gdx.input.getX());
 
     }
-//    public boolean onTouchEvent()
 
     @Override
     public void update(float dt) {
@@ -124,11 +131,6 @@ public class PlayState extends State{
         for (int i = 0; i < tubes.size; i++) {
             Tube tube = tubes.get(i);
             //if the tube is left out of the screen then we're going to execute this
-//            if (cam.position.x - cam.viewportWidth > tube.getPosTopTube().x + tube.getTopTube().getWidth()) {
-////                System.out.println("cam = " + (cam.position.x - (cam.viewportWidth / 2)) + 50);
-////                System.out.println("bird = " + bird.getPosition().x);
-//                tube.reposition(tube.getPosTopTube().x + ((Tube.TUBE_WIDTH + TUBE_SPACING) * TUBE_COUNT));
-//            }
             if (bird.getPosition().x >=  tube.getPosTopTube().x + tube.getTopTube().getWidth()) {
                 switch (currentGroundNum) {
                     case 1:
@@ -158,6 +160,7 @@ public class PlayState extends State{
                         break;
                 }
             }
+            //Check the collision between the blue ally with the player
             if (tube.collides(bird.getBounds())) {
 //                gsm.set(new PlayState(gsm));
                 bird.status = 3;
@@ -197,11 +200,6 @@ public class PlayState extends State{
         for (Ground ground : grounds) {
             ground.dispose();
         }
-//        ground1.dispose();
-//        ground2.dispose();
-//        ground3.dispose();
-//        ground4.dispose();
-//        ground5.dispose();
         bird.dispose();
         for (Tube tube : tubes) {
             tube.dispose();
@@ -211,121 +209,70 @@ public class PlayState extends State{
 
     private void update_Ground_Bird() {
 
-//        if (bird.getPosition().y == 500) {
-//            bird.run();
-//        }
-
+        //birdPositionX is the right border's position of the player
         float birdPositionX = bird.getPosition().x + (bird.getTexture().getRegionWidth()/playerFrameNum);
-        //Making sure the player would not fall down on the specific ground by setting the player's height
-//        for (Ground ground : grounds) {
-//            if (birdPositionX > ground.getPosition().x) {
-//                bird.setGroundHeight(ground.getHeight());
-//
-//                currentGroundNum =
-//            }
-//        }
-        if (birdPositionX> ground1.getPosition().x) {
+
+        //When the player stand on the new ground, setting the new player's ground height
+        if (birdPositionX >= ground1.getPosition().x) {
             bird.setGroundHeight(ground1.getHeight());
             //Record which ground the player is staying on.
             currentGroundNum = 1;
         }
-        if (birdPositionX > ground2.getPosition().x) {
+        if (birdPositionX >= ground2.getPosition().x) {
+            System.out.print("birdPositionX = " + birdPositionX);
+            System.out.print("ground2.getPosition().x = " + ground2.getPosition().x);
             bird.setGroundHeight(ground2.getHeight());
             currentGroundNum = 2;
         }
-        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/playerFrameNum) > ground3.getPosition().x) {
+        if (birdPositionX >= ground3.getPosition().x) {
             bird.setGroundHeight(ground3.getHeight());
             currentGroundNum = 3;
         }
-        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/playerFrameNum) > ground4.getPosition().x) {
+        if (birdPositionX >= ground4.getPosition().x) {
             bird.setGroundHeight(ground4.getHeight());
             currentGroundNum = 4;
         }
-        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/playerFrameNum) > ground5.getPosition().x) {
+        if (birdPositionX >= ground5.getPosition().x) {
             bird.setGroundHeight(ground5.getHeight());
             currentGroundNum = 5;
         }
 
-        //If the player has pass the current ground, we create the new ground (by computing the whole ground length which includes the ground's gap)
-        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/playerFrameNum) > ground1.getPosition().x + ground1.getLength()) {
-            System.out.println("=========  create new ground1  ============");
-            System.out.println("cam = " + (cam.position.x - (cam.viewportWidth / 2)));
-            System.out.println("bird = " + bird.getPosition().x);
-            if (bird.getPosition().y < ground1.getHeight()) {
-                gameover = true;
-                bird.colliding = true;
-                bird.status = 3;
+        //Making sure the player would not fall down on the specific ground by setting the player's height
+        for(Ground ground: grounds){
+            if (birdPositionX > ground.getPosition().x + ground.getLength()) {
+                //bird.setPositionY(0);
+                bird.setGroundHeight(0);
+                if (bird.getPosition().y < ground.getHeight()) {
+                    gameover = true;
+                    bird.colliding = true;
+                    bird.status = 3;    //3 means collision status
+                    //bird.setGroundHeight(0);    //if the player fall down, set the player's ground height 0
+                }
             }
-            bird.setGroundHeight(0);
-            System.out.println("new length of ground1 = " + ground1.getLength());
         }
+
+        //If the player has pass the current ground, we create the new ground (by computing the whole ground length which includes the ground's gap)
         if (bird.getPosition().x - (bird.getTexture().getRegionWidth()/playerFrameNum) > ground1.getPosition().x + ground1.getLength()) {
             ground1.setPosition(ground5.getPosition().x - ground1.getPosition().x + ground5.getLength() + ground5.getGroundGap(), 0, 0);
             ground1.reposition();
-        }
-
-        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/playerFrameNum) > ground2.getPosition().x + ground2.getLength()) {
-            System.out.println("=========  create new ground2  ============");
-            if (bird.getPosition().y < ground1.getHeight()) {
-                gameover = true;
-                bird.colliding = true;
-                bird.status = 3;
-            }
-            bird.setGroundHeight(0);
-            System.out.println("new length of ground2 = " + ground2.getLength());
-            //if (cam.position.x - (cam.viewportWidth / 2) > groundPos2.x + ground2.getWidth()) {
-            //    groundPos2.add(ground2.getWidth() * 2, 0);
-            //}
         }
         if (bird.getPosition().x - (bird.getTexture().getRegionWidth()/playerFrameNum) > ground2.getPosition().x + ground2.getLength()) {
             ground2.setPosition(ground1.getPosition().x - ground2.getPosition().x + ground1.getLength() + ground1.getGroundGap(), 0, 0);
             ground2.reposition();
         }
-
-        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/playerFrameNum) > ground3.getPosition().x + ground3.getLength()) {
-            System.out.println("=========  create new ground3  ============");
-            if (bird.getPosition().y < ground1.getHeight()) {
-                gameover = true;
-                bird.colliding = true;
-                bird.status = 3;
-            }
-            bird.setGroundHeight(0);
-            System.out.println("new length of ground1 = " + ground3.getLength());
-        }
         if (bird.getPosition().x - (bird.getTexture().getRegionWidth()/playerFrameNum) > ground3.getPosition().x + ground3.getLength()) {
             ground3.setPosition(ground2.getPosition().x - ground3.getPosition().x + ground2.getLength() + ground2.getGroundGap(), 0, 0);
             ground3.reposition();
-        }
-
-        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/playerFrameNum) > ground4.getPosition().x + ground4.getLength()) {
-            System.out.println("=========  create new ground4  ============");
-            if (bird.getPosition().y < ground1.getHeight()) {
-                gameover = true;
-                bird.colliding = true;
-                bird.status = 3;
-            }
-            bird.setGroundHeight(0);
-            System.out.println("new length of ground4 = " + ground4.getLength());
         }
         if (bird.getPosition().x - (bird.getTexture().getRegionWidth()/playerFrameNum) > ground4.getPosition().x + ground4.getLength()) {
             ground4.setPosition(ground3.getPosition().x - ground4.getPosition().x + ground3.getLength() + ground3.getGroundGap(), 0, 0);
             ground4.reposition();
         }
-
-        if (bird.getPosition().x + (bird.getTexture().getRegionWidth()/playerFrameNum) > ground5.getPosition().x + ground5.getLength()) {
-            System.out.println("=========  create new ground5  ============");
-            if (bird.getPosition().y < ground1.getHeight()) {
-                gameover = true;
-                bird.colliding = true;
-                bird.status = 3;
-            }
-            bird.setGroundHeight(0);
-            System.out.println("new length of ground1 = " + ground5.getLength());
-        }
         if (bird.getPosition().x - (bird.getTexture().getRegionWidth()/playerFrameNum) > ground5.getPosition().x + ground5.getLength()) {
             ground5.setPosition(ground4.getPosition().x - ground5.getPosition().x + ground4.getLength() + ground4.getGroundGap(), 0, 0);
             ground5.reposition();
         }
+
     }
 
 }

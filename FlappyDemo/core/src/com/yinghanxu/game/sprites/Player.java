@@ -12,23 +12,23 @@ import com.yinghanxu.game.States.PlayState;
  * Created by 英瀚 on 2016/11/9.
  */
 
-public class Bird {
+public class Player {
     private static final int GRAVITY = -40;
-    private static final int MOVEMENT = 500;
+    private static final int MOVEMENT = 0;
     public static final int GROUND_Y_OFFSET = -100;
     private Vector3 position;
     private Vector3 velocity;
     private Rectangle bounds;
-    private Animation birdAnimationRun;
-    private Animation birdAnimationJump;
-    private Animation birdAnimationCollide;
+    private Animation playerAnimationRun;
+    private Animation playerAnimationJump;
+    private Animation playerAnimationCollide;
     public Texture texture, textureJump;
     private int jumpFrameNum = 20, runFrameNum = 20;
     private Sound flap;
     private int groundHeight = 700;
     public int touchCount = 1;
 
-    private Texture bird;
+    private Texture player;
     private PlayState playState;
     public int status = 1; //1 means runing; 2 means jumping; 3 means colliding;
     private Ground ground;
@@ -46,24 +46,24 @@ public class Bird {
     public TextureRegion getTexture() {
         if (status == 1) {
             touchCount = 1;
-            return birdAnimationRun.getFrame();
+            return playerAnimationRun.getFrame();
         } else if (status == 2) {
-            return birdAnimationJump.getFrame();
+            return playerAnimationJump.getFrame();
         } else if (status == 3) {
-            return birdAnimationCollide.getFrame();
+            return playerAnimationCollide.getFrame();
         }
-        return birdAnimationRun.getFrame();
+        return playerAnimationRun.getFrame();
     }
 
-    public Bird(int x, int y) {
+    public Player(int x, int y) {
         position = new Vector3(x, y, 0);
         velocity = new Vector3(0, 0, 0);
-        //bird = new Texture("bird.png");
+        //player = new Texture("player.png");
         texture = new Texture("player.png");
         textureJump = new Texture("1130jump.png");
-        birdAnimationRun = new Animation(new TextureRegion(texture), runFrameNum, 0.5f);
-        birdAnimationJump = new Animation(new TextureRegion(textureJump), jumpFrameNum, 0.8f);
-        birdAnimationCollide = new Animation(new TextureRegion(texture), runFrameNum, 0.1f);
+        playerAnimationRun = new Animation(new TextureRegion(texture), runFrameNum, 0.5f);
+        playerAnimationJump = new Animation(new TextureRegion(textureJump), jumpFrameNum, 0.8f);
+        playerAnimationCollide = new Animation(new TextureRegion(texture), runFrameNum, 0.1f);
         bounds = new Rectangle(x, y, texture.getWidth() / runFrameNum , texture.getHeight());
         flap = Gdx.audio.newSound(Gdx.files.internal("sfx_wing.ogg"));
         colliding = false;
@@ -72,16 +72,16 @@ public class Bird {
 
     public void update(float dt) {
         if (status == 1) {
-            birdAnimationRun.update(dt);
+            playerAnimationRun.update(dt);
         } else if (status == 2) {
-            birdAnimationJump.update(dt);
+            playerAnimationJump.update(dt);
         } else if (status ==3) {
-            birdAnimationCollide.update(dt);
+            playerAnimationCollide.update(dt);
         }
 
         velocity.add(0, GRAVITY, 0);
 
-        velocity.scl(dt);   //multiply everything by delta time---scale. Otherwise the bird will move too fast to see.
+        velocity.scl(dt);   //multiply everything by delta time---scale. Otherwise the player will move too fast to see.
         if (!colliding) {
             position.add(MOVEMENT * dt, velocity.y, 0);
         }
@@ -105,8 +105,8 @@ public class Bird {
         //flap.play();    //set the 0.5 volumme
         velocity.y = 1200;
         status = 2;
-        birdAnimationJump = new Animation(new TextureRegion(textureJump), jumpFrameNum, 0.8f);
-        //velocity.x = 20; //we can change the x axes so the bird would fly ahead
+        playerAnimationJump = new Animation(new TextureRegion(textureJump), jumpFrameNum, 0.8f);
+        //velocity.x = 20; //we can change the x axes so the player would fly ahead
     }
 
     public Rectangle getBounds() {

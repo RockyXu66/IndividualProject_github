@@ -15,14 +15,14 @@ public class Ally {
     private Vector2 ally;
     private Rectangle bounds;
     private Texture texture;
-    private Animation allyAnimationRun;
+    private AllyAnimation allyAnimationRun;
     private int runFrameNum = 20;
 
     public Ally(float x) {
 
         ally = new Vector2(x, Ground.GROUND_HEIGHT);
         texture = new Texture("ally.png");
-        allyAnimationRun = new Animation(new TextureRegion(texture), runFrameNum, 0.5f);
+        allyAnimationRun = new AllyAnimation(new TextureRegion(texture), runFrameNum, 2f);
 
         bounds = new Rectangle(ally.x, ally.y, texture.getWidth() / runFrameNum , texture.getHeight()); //use the 4 parameters' method, x, y, width, height
 
@@ -33,7 +33,7 @@ public class Ally {
 
 
     }
-    public Texture getTopTube() {
+    public Texture getAlly() {
         return texture;
     }
 
@@ -41,7 +41,7 @@ public class Ally {
         return allyAnimationRun.getFrame();
     }
 
-    public Vector2 getPosTopTube() {
+    public Vector2 getPosAlly() {
         return ally;
     }
 
@@ -51,7 +51,7 @@ public class Ally {
     }
 
     public boolean collides(Rectangle player) {
-        return player.overlaps(bounds);// || player.overlaps(boundsBot);
+        return player.overlaps(bounds);
     }
 
     public void dispose(){

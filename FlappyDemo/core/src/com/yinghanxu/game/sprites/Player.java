@@ -14,7 +14,7 @@ import com.yinghanxu.game.States.PlayState;
 
 public class Player {
     private static final int GRAVITY = -40;
-    private static final int MOVEMENT = 0;
+    private static final int MOVEMENT = 500;
     public static final int GROUND_Y_OFFSET = -100;
     private Vector3 position;
     private Vector3 velocity;

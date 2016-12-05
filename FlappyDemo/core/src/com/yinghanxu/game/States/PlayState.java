@@ -2,7 +2,9 @@ package com.yinghanxu.game.States;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -38,6 +40,11 @@ public class PlayState extends State{
     private int playerFrameNum = 2;
 
     Vector3 birdPosition;
+
+    //load the font
+    BitmapFont font;
+    String myText;
+    float fontPosWidth = 0;
 
     protected PlayState(GameStateManager gsm) {
         super(gsm);
@@ -85,6 +92,11 @@ public class PlayState extends State{
         allies.add(new Ally(600 + rand.nextInt(400)));
         allies.add(new Ally(ground2.getPosition().x + rand.nextInt(ground2.getLength())));
 
+        //load the font
+        font = new BitmapFont(Gdx.files.internal("whitefont.fnt"));
+        font.getData().setScale(4,3);
+        font.setColor(Color.BLACK);
+        myText = "0";
     }
 
     @Override
@@ -115,6 +127,8 @@ public class PlayState extends State{
 
         player.update(dt);
         //System.out.println(player.getPosition().x);
+
+        fontPosWidth = cam.position.x + cam.viewportWidth - 50;
 
         cam.position.x = player.getPosition().x + (cam.viewportWidth / 2) - 50;     //set our camera's position with the flying player
         for (int i = 0; i < allies.size; i++) {
@@ -159,6 +173,7 @@ public class PlayState extends State{
             }
         }
         cam.update();   //this will tell lib gdx the camera has been repositioned
+        myText = String.valueOf((int)(player.getPosition().x/50));
     }
 
     @Override
@@ -180,6 +195,8 @@ public class PlayState extends State{
             sb.draw(gameoverImg, cam.position.x - gameoverImg.getWidth() / 2, cam.position.y);
 
         }
+        //draw the score in the screen
+        font.draw(sb, myText, fontPosWidth , cam.viewportHeight - 50);
         sb.end();
     }
 

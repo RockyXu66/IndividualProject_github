@@ -26,7 +26,7 @@ public class FlappyDemo extends ApplicationAdapter {
 		music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
 		music.setLooping(true);
 		music.setVolume(0.1f);	// 1 would be 100% volume
-		music.play();
+		//music.play();
 		Gdx.gl.glClearColor(1, 1, 1, 1);	//set the background color to be white
 		gsm.push(new MenuState(gsm));
 	}

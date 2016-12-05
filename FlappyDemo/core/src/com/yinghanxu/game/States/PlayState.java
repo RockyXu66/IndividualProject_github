@@ -7,9 +7,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.yinghanxu.game.FlappyDemo;
+import com.yinghanxu.game.sprites.Ally;
 import com.yinghanxu.game.sprites.Bird;
 import com.yinghanxu.game.sprites.Ground;
-import com.yinghanxu.game.sprites.Tube;
 
 import java.util.Random;
 
@@ -26,7 +26,7 @@ public class PlayState extends State{
 
     public Bird bird;
 
-    private Array<Tube> tubes;
+    private Array<Ally> allies;
     private Ground ground1, ground2, ground3, ground4, ground5, ground6;
     private Array<Ground> grounds;
 
@@ -88,13 +88,13 @@ public class PlayState extends State{
 //      birdPosition.y = ground1.getHeight();
 //      birdPosition.z = 0;
 
-        tubes = new Array<Tube>();
+        allies = new Array<Ally>();
 
 //        for (int i = 1; i <= TUBE_COUNT; i++) {
-//            tubes.add(new Tube(i * (TUBE_SPACING + Tube.TUBE_WIDTH)));
+//            allies.add(new Tube(i * (TUBE_SPACING + Tube.TUBE_WIDTH)));
 //        }
-        tubes.add(new Tube(600 + rand.nextInt(400)));
-        tubes.add(new Tube(ground2.getPosition().x + rand.nextInt(ground2.getLength())));
+        allies.add(new Ally(600 + rand.nextInt(400)));
+        allies.add(new Ally(ground2.getPosition().x + rand.nextInt(ground2.getLength())));
 
     }
 
@@ -128,10 +128,11 @@ public class PlayState extends State{
         //System.out.println(bird.getPosition().x);
 
         cam.position.x = bird.getPosition().x + (cam.viewportWidth / 2) - 50;     //set our camera's position with the flying bird
-        for (int i = 0; i < tubes.size; i++) {
-            Tube tube = tubes.get(i);
-            //if the tube is left out of the screen then we're going to execute this
-            if (bird.getPosition().x >=  tube.getPosTopTube().x + tube.getTopTube().getWidth()) {
+        for (int i = 0; i < allies.size; i++) {
+            Ally ally = allies.get(i);
+            ally.update(dt);
+            //if the ally runs out of the screen then we're going to execute this
+            if (bird.getPosition().x >=  ally.getPosTopTube().x + ally.getTopTube().getWidth()) {
                 switch (currentGroundNum) {
                     case 1:
                         nextGround = ground3;
@@ -155,13 +156,13 @@ public class PlayState extends State{
                     case 1:
                         //Make sure the new ally is not relocated in a short ground
                         if (nextGround.getLength() > 500) {
-                            tube.reposition(nextGround.getPosition().x + 100 + rand.nextInt(nextGround.getLength() - 100 - tube.getTopTube().getWidth()));
+                            ally.reposition(nextGround.getPosition().x + 100 + rand.nextInt(nextGround.getLength() - 100 - ally.getTopTube().getWidth()/20));
                         }
                         break;
                 }
             }
             //Check the collision between the blue ally with the player
-            if (tube.collides(bird.getBounds())) {
+            if (ally.collides(bird.getBounds())) {
 //                gsm.set(new PlayState(gsm));
                 bird.status = 3;
                 gameover = true;
@@ -178,8 +179,8 @@ public class PlayState extends State{
 
         sb.draw(bird.getTexture(), bird.getPosition().x, bird.getPosition().y);
 
-        for (Tube tube : tubes) {
-            sb.draw(tube.getTopTube(), tube.getPosTopTube().x, tube.getPosTopTube().y);
+        for (Ally ally : allies) {
+            sb.draw(ally.getTexture(), ally.getPosTopTube().x, ally.getPosTopTube().y);
 //        sb.draw(tube.getBottomTube(), tube.getPosBottomTube().x, tube.getPosBottomTube().y);
         }
 
@@ -201,8 +202,8 @@ public class PlayState extends State{
             ground.dispose();
         }
         bird.dispose();
-        for (Tube tube : tubes) {
-            tube.dispose();
+        for (Ally ally : allies) {
+            ally.dispose();
         }
         System.out.println("Play State Disposed");
     }

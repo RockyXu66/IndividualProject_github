@@ -102,7 +102,7 @@ public class Bird {
     }
 
     public void jump() {
-        flap.play();    //set the 0.5 volumme
+        //flap.play();    //set the 0.5 volumme
         velocity.y = 1200;
         status = 2;
         birdAnimationJump = new Animation(new TextureRegion(textureJump), jumpFrameNum, 0.8f);

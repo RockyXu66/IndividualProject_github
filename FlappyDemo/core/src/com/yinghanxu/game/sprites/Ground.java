@@ -20,7 +20,7 @@ public class Ground {
     private int GROUND_MAX_LENGTH = 1000;
     private int GROUND_MAX_HEIGHT = 30;
 
-    public static final int GROUND_HEIGHT = 500;
+    public static final int GROUND_HEIGHT = 700;
 
     private Texture ground1, ground2, ground3, ground4;
     //ground1 is the first ground texture, ground2 is the second ground texture

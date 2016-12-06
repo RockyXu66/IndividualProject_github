@@ -22,7 +22,7 @@ public class Player {
     private Animation playerAnimationRun;
     private Animation playerAnimationJump;
     private Animation playerAnimationCollide;
-    public Texture texture, textureJump;
+    public Texture texture, textureJump, textureCollide;
     private int jumpFrameNum = 20, runFrameNum = 20;
     private Sound flap;
     private int groundHeight = 700;
@@ -49,10 +49,15 @@ public class Player {
             return playerAnimationRun.getFrame();
         } else if (status == 2) {
             return playerAnimationJump.getFrame();
-        } else if (status == 3) {
-            return playerAnimationCollide.getFrame();
         }
+//        } else if (status == 3) {
+//            return playerAnimationCollide.getFrame();
+//        }
         return playerAnimationRun.getFrame();
+    }
+
+    public Texture getCollideTexture(){
+        return textureCollide;
     }
 
     public Player(int x, int y) {
@@ -61,6 +66,7 @@ public class Player {
         //player = new Texture("player.png");
         texture = new Texture("player.png");
         textureJump = new Texture("1130jump.png");
+        textureCollide = new Texture("die.png");
         playerAnimationRun = new Animation(new TextureRegion(texture), runFrameNum, 0.5f);
         playerAnimationJump = new Animation(new TextureRegion(textureJump), jumpFrameNum, 0.8f);
         playerAnimationCollide = new Animation(new TextureRegion(texture), runFrameNum, 0.1f);
@@ -109,6 +115,8 @@ public class Player {
         //velocity.x = 20; //we can change the x axes so the player would fly ahead
     }
 
+    public int getStatus(){ return status;}
+
     public Rectangle getBounds() {
         return bounds;
     }
@@ -123,6 +131,8 @@ public class Player {
 
     public void dispose(){
         texture.dispose();
+        textureJump.dispose();
+        textureCollide.dispose();
         flap.dispose();
     }
 }

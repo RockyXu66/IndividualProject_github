@@ -168,6 +168,7 @@ public class PlayState extends State{
             if (ally.collides(player.getBounds())) {
 //                gsm.set(new PlayState(gsm));
                 player.status = 3;
+                ally.status = 1;
                 gameover = true;
                 player.colliding = true;
             }
@@ -181,16 +182,26 @@ public class PlayState extends State{
         sb.setProjectionMatrix(cam.combined); //put the camera in the world view
         sb.begin(); //open rendering box off
 
-        sb.draw(player.getTexture(), player.getPosition().x, player.getPosition().y);
-
-        for (Ally ally : allies) {
-            sb.draw(ally.getTexture(), ally.getPosAlly().x, ally.getPosAlly().y);
-        }
-
         //draw the grounds in the screen
         for(Ground ground : grounds) {
             sb.draw(ground.getTexture(), ground.getPosition().x, ground.getPosition().y, ground.getLength(), ground.getHeight());
         }
+        if (player.getStatus() == 1 || player.getStatus() == 2) {
+            sb.draw(player.getTexture(), player.getPosition().x, player.getPosition().y);
+        } else {
+            sb.draw(player.getCollideTexture(), player.getPosition().x - 50, player.getGroundHeight() - 25);
+        }
+
+        for (Ally ally : allies) {
+            if (ally.status == 1) {
+                sb.draw(ally.getCollideTexture(), ally.getPosAlly().x + 50, ally.getPosAlly().y - 25);
+            } else {
+                sb.draw(ally.getTexture(), ally.getPosAlly().x, ally.getPosAlly().y);
+            }
+
+        }
+
+
         if (gameover) {
             sb.draw(gameoverImg, cam.position.x - gameoverImg.getWidth() / 2, cam.position.y);
 

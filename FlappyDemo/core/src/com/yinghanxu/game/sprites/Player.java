@@ -105,7 +105,7 @@ public class Player {
                 if (waveTime % 200 == 0) {
                     waveStatus = false;
                 }
-                System.out.println("waveTime = " + waveTime);
+                //System.out.println("waveTime = " + waveTime);
             }
 //        }
 

@@ -45,9 +45,10 @@ public class PlayState extends State{
     Vector3 birdPosition;
 
     //load the font
-    BitmapFont font;
-    String myText;
-    float fontPosX = 0;
+    BitmapFont font1, fontDistance, font2, fontScore;
+    String myText1, myDistance, myText2, myScore;
+    float font1PosX = 0,fontDistancePosX = 0, font2PosX = 0, fontScorePosX = 0;
+    int score = 0; //The score is used to calculate the number that the player kills the enmey
 
     protected PlayState(GameStateManager gsm) {
         super(gsm);
@@ -99,10 +100,22 @@ public class PlayState extends State{
         enemies.add(new Enemy(ground2.getPosition().x + rand.nextInt(ground2.getLength())));
 
         //load the font
-        font = new BitmapFont(Gdx.files.internal("whitefont.fnt"));
-        font.getData().setScale(4,3);
-        font.setColor(Color.BLACK);
-        myText = "0";
+        font1 = new BitmapFont(Gdx.files.internal("whitefont.fnt"));
+        font1.getData().setScale(2, 2);
+        font1.setColor(Color.BLACK);
+        myText1 = "Distance:";
+        fontDistance = new BitmapFont(Gdx.files.internal("whitefont.fnt"));
+        fontDistance.getData().setScale(4,3);
+        fontDistance.setColor(Color.BLACK);
+        myDistance = "0";
+        font2 = new BitmapFont(Gdx.files.internal("whitefont.fnt"));
+        font2.getData().setScale(2, 2);
+        font2.setColor(Color.BLACK);
+        myText2 = "Score:";
+        fontScore = new BitmapFont(Gdx.files.internal("whitefont.fnt"));
+        fontScore.getData().setScale(4, 3);
+        fontScore.setColor(Color.BLACK);
+        myScore = "0";
     }
 
     @Override
@@ -139,7 +152,10 @@ public void update(float dt) {
         //System.out.println(player.getPosition().x);
 
         //set the font x position in the screen
-        fontPosX = player.getPosition().x + cam.viewportWidth -260;
+        font1PosX = player.getPosition().x + cam.viewportWidth - 600;
+        fontDistancePosX = player.getPosition().x + cam.viewportWidth -260;
+        font2PosX = player.getPosition().x + cam.viewportWidth - 600;
+        fontScorePosX = player.getPosition().x + cam.viewportWidth -260;
 
         cam.position.x = player.getPosition().x + (cam.viewportWidth / 2) - 50;     //set our camera's position with the flying player
         for (int i = 0; i < allies.size; i++) {
@@ -186,81 +202,83 @@ public void update(float dt) {
         }
 
 
-    for (int i = 0; i < enemies.size; i++) {
-        Enemy enemy = enemies.get(i);
-        enemy.update(dt);
-        //if the enemy runs out of the screen then we're going to execute this
-        if (player.getPosition().x >=  enemy.getPosEnemy().x + enemy.getEnemy().getWidth()) {
-            switch (currentGroundNum) {
-                case 1:
-                    nextGround = ground3;
-                    break;
-                case 2:
-                    nextGround = ground4;
-                    break;
-                case 3:
-                    nextGround = ground5;
-                    break;
-                case 4:
-                    nextGround = ground1;
-                    break;
-                case 5:
-                    nextGround = ground2;
-                    break;
-            }
-            switch (rand.nextInt(3)) {
-                case 0:
+        for (int i = 0; i < enemies.size; i++) {
+            Enemy enemy = enemies.get(i);
+            enemy.update(dt);
+            //if the enemy runs out of the screen then we're going to execute this
+            if (player.getPosition().x >=  enemy.getPosEnemy().x + enemy.getEnemy().getWidth()) {
+                switch (currentGroundNum) {
+                    case 1:
+                        nextGround = ground3;
+                        break;
+                    case 2:
+                        nextGround = ground4;
+                        break;
+                    case 3:
+                        nextGround = ground5;
+                        break;
+                    case 4:
+                        nextGround = ground1;
+                        break;
+                    case 5:
+                        nextGround = ground2;
+                        break;
+                }
+                switch (rand.nextInt(3)) {
+                    case 0:
 
-                case 1:
-                    //Make sure the new enemy is not relocated in a short ground
-                    if (nextGround.getLength() > 500) {
-                        float X = nextGround.getPosition().x + 100 +
-                                rand.nextInt(nextGround.getLength() - 100 - enemy.getEnemy().getWidth()/20);
-                        for (Ally ally : allies) {
-                            if (ally.getPosAlly().x - 200 > X || ally.getPosAlly().x +
-                                    ally.getTexture().getRegionWidth() / playerFrameNum + 200 < X) {
-                                enemy.reposition(X);
+                    case 1:
+                        //Make sure the new enemy is not relocated in a short ground
+                        if (nextGround.getLength() > 500) {
+                            float X = nextGround.getPosition().x + 100 +
+                                    rand.nextInt(nextGround.getLength() - 100 - enemy.getEnemy().getWidth()/20);
+                            for (Ally ally : allies) {
+                                if (ally.getPosAlly().x - 200 > X || ally.getPosAlly().x +
+                                        ally.getTexture().getRegionWidth() / playerFrameNum + 200 < X) {
+                                    enemy.reposition(X);
+                                }
                             }
                         }
-                    }
-                    break;
+                        break;
+                }
             }
-        }
-        //Check the collision between the blue ally with the player
+            //Check the collision between the blue ally with the player
 
-        //Check whether the enemy have waved the sword and killed the player
-        if (enemy.collides((player.getBounds()))) {
-            if(enemy.status!= 3 ) {
-                //enemy.status = 2;   //waving the sword;
-                player.status = 3;
-                enemy.status = 1;   //Aftering killing the player, the enemy changes the animation to running
-                gameover = true;
-                player.colliding = true;
-            }
+            //Check whether the enemy have waved the sword and killed the player
+            if (enemy.collides((player.getBounds()))) {
+                if(enemy.status!= 3 ) {
+                    //enemy.status = 2;   //waving the sword;
+                    player.status = 3;
+                    enemy.status = 1;   //Aftering killing the player, the enemy changes the animation to running
+                    gameover = true;
+                    player.colliding = true;
+                }
 
-        }
-        //System.out.println("enemyX = " + enemy.getPosEnemy().x + "; playerX = " + cam.position.x);
-        //This is the distance which is used to determine whether the player kills the enemy;
-        if (java.lang.Math.abs(enemy.getPosEnemy().x -
-                (player.getPosition().x + (player.getTexture().getRegionWidth() / playerFrameNum)+250)) < 5) {
-            if (player.status == 4) {
-                enemy.status = 3; // 3 means the enemy is dead.
+            }
+            //System.out.println("enemyX = " + enemy.getPosEnemy().x + "; playerX = " + cam.position.x);
+            //This is the distance which is used to determine whether the player kills the enemy;
+            if (java.lang.Math.abs(enemy.getPosEnemy().x -
+                    (player.getPosition().x + (player.getTexture().getRegionWidth() / playerFrameNum)+250)) < 5) {
+                if (player.status == 4) {
+                    enemy.status = 3; // 3 means the enemy is dead.
+                    score++;
+                }
+            }
+            //This is the distance which is used to determine whether the enemy should wave the sword and kill the player;
+            if (java.lang.Math.abs(enemy.getPosEnemy().x -
+                    (player.getPosition().x + (player.getTexture().getRegionWidth() / playerFrameNum)+200)) < 5) {
+                if(enemy.status!= 3 ) {
+                    enemy.status = 2;
+                }
             }
         }
-        //This is the distance which is used to determine whether the enemy should wave the sword and kill the player;
-        if (java.lang.Math.abs(enemy.getPosEnemy().x -
-                (player.getPosition().x + (player.getTexture().getRegionWidth() / playerFrameNum)+200)) < 5) {
-            if(enemy.status!= 3 ) {
-                enemy.status = 2;
-            }
-        }
-    }
 
 
         cam.update();   //this will tell lib gdx the camera has been repositioned
 
         //set the score value
-        myText = String.valueOf((int)(player.getPosition().x/50));
+        myDistance = String.valueOf((int)(player.getPosition().x/50));
+        myScore = String.valueOf(score);
     }
 
     @Override
@@ -297,8 +315,12 @@ public void update(float dt) {
             sb.draw(gameoverImg, cam.position.x - gameoverImg.getWidth() / 2, cam.position.y);
 
         }
-        //draw the score font in the screen
-        font.draw(sb, myText, fontPosX , cam.viewportHeight - 50);
+        //render the score font and distance in the screen
+        font1.draw(sb, myText1, font1PosX, cam.viewportHeight - 70);
+        fontDistance.draw(sb, myDistance, fontDistancePosX , cam.viewportHeight - 50);
+        font1.draw(sb, myText2, font1PosX, cam.viewportHeight - 170);
+        fontDistance.draw(sb, myScore, fontScorePosX , cam.viewportHeight - 150);
+
         sb.end();
     }
 

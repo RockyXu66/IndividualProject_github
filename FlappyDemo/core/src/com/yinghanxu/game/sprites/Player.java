@@ -102,7 +102,7 @@ public class Player {
                 waveTime++; //Calculate the waving sword time
                 playerAnimationWave.update(dt);
                 //Aftering spending out the waving time, change to the run status
-                if (waveTime % 50 == 0) {
+                if (waveTime % 200 == 0) {
                     waveStatus = false;
                 }
                 System.out.println("waveTime = " + waveTime);
@@ -147,7 +147,7 @@ public class Player {
 
     public void wave() {
         waveStatus = true;
-        status = 4;
+        status = 4; //4 means the waving animation
         //velocity.y = 1500;
         playerAnimationWave = new Animation(new TextureRegion(textureWave), waveFrameNum, 1f);
     }

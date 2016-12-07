@@ -186,49 +186,75 @@ public void update(float dt) {
         }
 
 
-//    for (int i = 0; i < enemies.size; i++) {
-//        Enemy enemy = enemies.get(i);
-//        enemy.update(dt);
-//        //if the enemy runs out of the screen then we're going to execute this
-//        if (player.getPosition().x >=  enemy.getPosEnemy().x + enemy.getEnemy().getWidth()) {
-//            switch (currentGroundNum) {
-//                case 1:
-//                    nextGround = ground3;
-//                    break;
-//                case 2:
-//                    nextGround = ground4;
-//                    break;
-//                case 3:
-//                    nextGround = ground5;
-//                    break;
-//                case 4:
-//                    nextGround = ground1;
-//                    break;
-//                case 5:
-//                    nextGround = ground2;
-//                    break;
-//            }
-//            switch (rand.nextInt(3)) {
-//                case 0:
-//
-//                case 1:
-//                    //Make sure the new enemy is not relocated in a short ground
-//                    if (nextGround.getLength() > 500) {
-//                        enemy.reposition(nextGround.getPosition().x + 100 + rand.nextInt(nextGround.getLength() - 100 - ally.getAlly().getWidth()/20));
-//                    }
-//                    break;
-//            }
-//        }
-//        //Check the collision between the blue ally with the player
-//
-//        //Check the collision between the player and the enemy
-//        if (enemy.collides((player.getBounds()))) {
-//            player.status = 3;
-//            enemy.status = 1;
-//            gameover = true;
-//            player.colliding = true;
-//        }
-//    }
+    for (int i = 0; i < enemies.size; i++) {
+        Enemy enemy = enemies.get(i);
+        enemy.update(dt);
+        //if the enemy runs out of the screen then we're going to execute this
+        if (player.getPosition().x >=  enemy.getPosEnemy().x + enemy.getEnemy().getWidth()) {
+            switch (currentGroundNum) {
+                case 1:
+                    nextGround = ground3;
+                    break;
+                case 2:
+                    nextGround = ground4;
+                    break;
+                case 3:
+                    nextGround = ground5;
+                    break;
+                case 4:
+                    nextGround = ground1;
+                    break;
+                case 5:
+                    nextGround = ground2;
+                    break;
+            }
+            switch (rand.nextInt(3)) {
+                case 0:
+
+                case 1:
+                    //Make sure the new enemy is not relocated in a short ground
+                    if (nextGround.getLength() > 500) {
+                        float X = nextGround.getPosition().x + 100 +
+                                rand.nextInt(nextGround.getLength() - 100 - enemy.getEnemy().getWidth()/20);
+                        for (Ally ally : allies) {
+                            if (ally.getPosAlly().x - 200 > X || ally.getPosAlly().x +
+                                    ally.getTexture().getRegionWidth() / playerFrameNum + 200 < X) {
+                                enemy.reposition(X);
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
+        //Check the collision between the blue ally with the player
+
+        //Check whether the enemy have waved the sword and killed the player
+        if (enemy.collides((player.getBounds()))) {
+            if(enemy.status!= 3 ) {
+                //enemy.status = 2;   //waving the sword;
+                player.status = 3;
+                enemy.status = 1;   //Aftering killing the player, the enemy changes the animation to running
+                gameover = true;
+                player.colliding = true;
+            }
+
+        }
+        //System.out.println("enemyX = " + enemy.getPosEnemy().x + "; playerX = " + cam.position.x);
+        //This is the distance which is used to determine whether the player kills the enemy;
+        if (java.lang.Math.abs(enemy.getPosEnemy().x -
+                (player.getPosition().x + (player.getTexture().getRegionWidth() / playerFrameNum)+250)) < 5) {
+            if (player.status == 4) {
+                enemy.status = 3; // 3 means the enemy is dead.
+            }
+        }
+        //This is the distance which is used to determine whether the enemy should wave the sword and kill the player;
+        if (java.lang.Math.abs(enemy.getPosEnemy().x -
+                (player.getPosition().x + (player.getTexture().getRegionWidth() / playerFrameNum)+200)) < 5) {
+            if(enemy.status!= 3 ) {
+                enemy.status = 2;
+            }
+        }
+    }
 
 
         cam.update();   //this will tell lib gdx the camera has been repositioned
@@ -260,10 +286,10 @@ public void update(float dt) {
             }
         }
         for (Enemy enemy : enemies) {
-            if (enemy.status == 1) {
-                sb.draw(enemy.getCollideTexture(), enemy.getPosEnemy().x + 50, enemy.getPosEnemy().y - 25);
-            } else {
+            if(enemy.status!=3) {
                 sb.draw(enemy.getTexture(), enemy.getPosEnemy().x, enemy.getPosEnemy().y);
+            }else {
+                sb.draw(enemy.getCollideTexture(),enemy.getPosEnemy().x + 50, enemy.getPosEnemy().y - 25);
             }
         }
 

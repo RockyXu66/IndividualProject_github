@@ -44,7 +44,7 @@ public class PlayState extends State{
     //load the font
     BitmapFont font;
     String myText;
-    float fontPosWidth = 0;
+    float fontPosX = 0;
 
     protected PlayState(GameStateManager gsm) {
         super(gsm);
@@ -107,28 +107,33 @@ public class PlayState extends State{
             }
             //touch left screen to jump & touch right screen to wave the sword
             else{
-                if (Gdx.input.getX() < Gdx.graphics.getWidth() / 2 && player.getTouchCount() ==1) {//capture the screen touch's X position
-                    player.jump();
-                    player.setTouchCount(2);
-                }
-                else if(Gdx.input.getX() < Gdx.graphics.getWidth() / 2 && player.getTouchCount() ==2){
-                    player.jump();
-                    player.setTouchCount(3);
+//                if (player.getWaveStatus() == 0) {
+                    if (Gdx.input.getX() < Gdx.graphics.getWidth() / 2 && player.getTouchCount() == 1) {//capture the screen touch's X position
+                        player.jump();
+                        player.setTouchCount(2);
+                    } else if (Gdx.input.getX() < Gdx.graphics.getWidth() / 2 && player.getTouchCount() == 2) {
+                        player.jump();
+                        player.setTouchCount(3);
+                    }
+//                }
+                if (Gdx.input.getX() > Gdx.graphics.getWidth() / 2 && player.getTouchCount()!=1 && player.getTouchCount()!=2) {
+                    player.wave();
                 }
             }
         }
 
     }
 
-    @Override
-    public void update(float dt) {
+@Override
+public void update(float dt) {
         handleInput();
         update_Ground_Bird();
 
         player.update(dt);
         //System.out.println(player.getPosition().x);
 
-        fontPosWidth = cam.position.x + cam.viewportWidth - 50;
+        //set the font x position in the screen
+        fontPosX = player.getPosition().x + cam.viewportWidth -260;
 
         cam.position.x = player.getPosition().x + (cam.viewportWidth / 2) - 50;     //set our camera's position with the flying player
         for (int i = 0; i < allies.size; i++) {
@@ -174,6 +179,8 @@ public class PlayState extends State{
             }
         }
         cam.update();   //this will tell lib gdx the camera has been repositioned
+
+        //set the score value
         myText = String.valueOf((int)(player.getPosition().x/50));
     }
 
@@ -186,7 +193,7 @@ public class PlayState extends State{
         for(Ground ground : grounds) {
             sb.draw(ground.getTexture(), ground.getPosition().x, ground.getPosition().y, ground.getLength(), ground.getHeight());
         }
-        if (player.getStatus() == 1 || player.getStatus() == 2) {
+        if (player.getStatus() == 1 || player.getStatus() == 2 || player.getWaveStatus() ==1) {
             sb.draw(player.getTexture(), player.getPosition().x, player.getPosition().y);
         } else {
             sb.draw(player.getCollideTexture(), player.getPosition().x - 50, player.getGroundHeight() - 25);
@@ -207,7 +214,7 @@ public class PlayState extends State{
 
         }
         //draw the score in the screen
-        font.draw(sb, myText, fontPosWidth , cam.viewportHeight - 50);
+        font.draw(sb, myText, fontPosX , cam.viewportHeight - 50);
         sb.end();
     }
 

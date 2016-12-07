@@ -14,23 +14,21 @@ import com.yinghanxu.game.States.PlayState;
 
 public class Player {
     private static final int GRAVITY = -40;
-    private static final int MOVEMENT = 500;
+    private static final int MOVEMENT = 0;//500;
     public static final int GROUND_Y_OFFSET = -100;
     private Vector3 position;
     private Vector3 velocity;
     private Rectangle bounds;
-    private Animation playerAnimationRun;
-    private Animation playerAnimationJump;
-    private Animation playerAnimationCollide;
-    public Texture texture, textureJump, textureCollide;
-    private int jumpFrameNum = 20, runFrameNum = 20;
+    private Animation playerAnimationRun, playerAnimationJump, playerAnimationCollide, playerAnimationWave;
+    public Texture texture, textureJump, textureCollide, textureWave;
+    private int jumpFrameNum = 20, runFrameNum = 20, waveFrameNum = 3;
     private Sound flap;
     private int groundHeight = 700;
     public int touchCount = 1;
 
     private Texture player;
     private PlayState playState;
-    public int status = 1; //1 means runing; 2 means jumping; 3 means colliding;
+    public int status = 1, waveStatus = 0; //1 means runing; 2 means jumping; 3 means colliding; 4 means waving the sword;
     private Ground ground;
     public boolean colliding;
     public Vector3 getPosition() {
@@ -44,12 +42,19 @@ public class Player {
     }
 
     public TextureRegion getTexture() {
-        if (status == 1) {
-            touchCount = 1;
-            return playerAnimationRun.getFrame();
-        } else if (status == 2) {
-            return playerAnimationJump.getFrame();
+        if (waveStatus == 1) {
+            return playerAnimationWave.getFrame();
+        }else {
+            if (status == 1) {
+                touchCount = 1;
+                return playerAnimationRun.getFrame();
+            } else if (status == 2) {
+                return playerAnimationJump.getFrame();
+            }
         }
+//         else if (status == 4) {
+//            return playerAnimationWave.getFrame();
+//        }
 //        } else if (status == 3) {
 //            return playerAnimationCollide.getFrame();
 //        }
@@ -67,9 +72,11 @@ public class Player {
         texture = new Texture("player.png");
         textureJump = new Texture("1130jump.png");
         textureCollide = new Texture("die.png");
+        textureWave = new Texture("birdanimation.png");
         playerAnimationRun = new Animation(new TextureRegion(texture), runFrameNum, 0.5f);
-        playerAnimationJump = new Animation(new TextureRegion(textureJump), jumpFrameNum, 0.8f);
+        //playerAnimationJump = new Animation(new TextureRegion(textureJump), jumpFrameNum, 1f);
         playerAnimationCollide = new Animation(new TextureRegion(texture), runFrameNum, 0.1f);
+        //playerAnimationWave = new Animation(new TextureRegion(textureWave), waveFrameNum, 0.5f);
         bounds = new Rectangle(x, y, texture.getWidth() / runFrameNum , texture.getHeight());
         flap = Gdx.audio.newSound(Gdx.files.internal("sfx_wing.ogg"));
         colliding = false;
@@ -77,12 +84,17 @@ public class Player {
 
 
     public void update(float dt) {
-        if (status == 1) {
-            playerAnimationRun.update(dt);
-        } else if (status == 2) {
-            playerAnimationJump.update(dt);
-        } else if (status ==3) {
-            playerAnimationCollide.update(dt);
+
+        if (waveStatus == 1) {
+            playerAnimationWave.update(dt);
+        } else {
+            if (status == 1) {
+                playerAnimationRun.update(dt);
+            } else if (status == 2) {
+                playerAnimationJump.update(dt);
+            } else if (status ==3) {
+                playerAnimationCollide.update(dt);
+            }
         }
 
         velocity.add(0, GRAVITY, 0);
@@ -96,6 +108,7 @@ public class Player {
             position.y = 0;
         }
         velocity.scl(1 / dt);   //reverse the velocity
+
         bounds.setPosition(position.x, position.y);
 
         if (position.y < groundHeight ) {   // + (texture.getHeight()/2)
@@ -109,13 +122,21 @@ public class Player {
 
     public void jump() {
         //flap.play();    //set the 0.5 volumme
-        velocity.y = 1200;
+        velocity.y = 1500;
         status = 2;
-        playerAnimationJump = new Animation(new TextureRegion(textureJump), jumpFrameNum, 0.8f);
+        playerAnimationJump = new Animation(new TextureRegion(textureJump), jumpFrameNum, 1f);
         //velocity.x = 20; //we can change the x axes so the player would fly ahead
     }
 
+    public void wave() {
+        waveStatus = 1;
+        //velocity.y = 1500;
+        playerAnimationWave = new Animation(new TextureRegion(textureWave), waveFrameNum, 1f);
+    }
+
     public int getStatus(){ return status;}
+
+    public int getWaveStatus() { return waveStatus;}
 
     public Rectangle getBounds() {
         return bounds;
@@ -133,6 +154,7 @@ public class Player {
         texture.dispose();
         textureJump.dispose();
         textureCollide.dispose();
+        textureWave.dispose();
         flap.dispose();
     }
 }

@@ -24,7 +24,7 @@ public class Ally {
         ally = new Vector2(x, Ground.GROUND_HEIGHT);
         texture = new Texture("ally.png");
         textureCollide = new Texture("allyDie.png");
-        allyAnimationRun = new AllyAnimation(new TextureRegion(texture), runFrameNum, 2f);
+        allyAnimationRun = new AllyAnimation(new TextureRegion(texture), runFrameNum, 0.5f);
 
         bounds = new Rectangle(ally.x, ally.y, texture.getWidth() / runFrameNum , texture.getHeight()); //use the 4 parameters' method, x, y, width, height
 

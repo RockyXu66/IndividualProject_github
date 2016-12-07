@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.yinghanxu.game.FlappyDemo;
 import com.yinghanxu.game.sprites.Ally;
+import com.yinghanxu.game.sprites.Enemy;
 import com.yinghanxu.game.sprites.Player;
 import com.yinghanxu.game.sprites.Ground;
 
@@ -25,6 +26,7 @@ public class PlayState extends State{
     public Player player;
 
     private Array<Ally> allies;
+    private Array<Enemy> enemies;
     private Ground ground1, ground2, ground3, ground4, ground5, ground6;
     private Array<Ground> grounds;
 
@@ -38,6 +40,7 @@ public class PlayState extends State{
     private boolean gameover;
     private Texture gameoverImg;
     private int playerFrameNum = 2;
+    private int waveTime = 0;
 
     Vector3 birdPosition;
 
@@ -88,9 +91,12 @@ public class PlayState extends State{
         gameoverImg = new Texture("gameover.png");
 
         allies = new Array<Ally>();
+        enemies = new Array<Enemy>();
 
         allies.add(new Ally(600 + rand.nextInt(400)));
         allies.add(new Ally(ground2.getPosition().x + rand.nextInt(ground2.getLength())));
+        enemies.add(new Enemy(700 + rand.nextInt()));
+        enemies.add(new Enemy(ground2.getPosition().x + rand.nextInt(ground2.getLength())));
 
         //load the font
         font = new BitmapFont(Gdx.files.internal("whitefont.fnt"));
@@ -116,7 +122,7 @@ public class PlayState extends State{
                         player.setTouchCount(3);
                     }
 //                }
-                if (Gdx.input.getX() > Gdx.graphics.getWidth() / 2 && player.getTouchCount()!=1 && player.getTouchCount()!=2) {
+                if (Gdx.input.getX() > Gdx.graphics.getWidth() / 2) {
                     player.wave();
                 }
             }
@@ -127,7 +133,7 @@ public class PlayState extends State{
 @Override
 public void update(float dt) {
         handleInput();
-        update_Ground_Bird();
+        update_Ground();
 
         player.update(dt);
         //System.out.println(player.getPosition().x);
@@ -169,7 +175,6 @@ public void update(float dt) {
                         break;
                 }
             }
-            //Check the collision between the blue ally with the player
             if (ally.collides(player.getBounds())) {
 //                gsm.set(new PlayState(gsm));
                 player.status = 3;
@@ -177,7 +182,55 @@ public void update(float dt) {
                 gameover = true;
                 player.colliding = true;
             }
+
         }
+
+
+//    for (int i = 0; i < enemies.size; i++) {
+//        Enemy enemy = enemies.get(i);
+//        enemy.update(dt);
+//        //if the enemy runs out of the screen then we're going to execute this
+//        if (player.getPosition().x >=  enemy.getPosEnemy().x + enemy.getEnemy().getWidth()) {
+//            switch (currentGroundNum) {
+//                case 1:
+//                    nextGround = ground3;
+//                    break;
+//                case 2:
+//                    nextGround = ground4;
+//                    break;
+//                case 3:
+//                    nextGround = ground5;
+//                    break;
+//                case 4:
+//                    nextGround = ground1;
+//                    break;
+//                case 5:
+//                    nextGround = ground2;
+//                    break;
+//            }
+//            switch (rand.nextInt(3)) {
+//                case 0:
+//
+//                case 1:
+//                    //Make sure the new enemy is not relocated in a short ground
+//                    if (nextGround.getLength() > 500) {
+//                        enemy.reposition(nextGround.getPosition().x + 100 + rand.nextInt(nextGround.getLength() - 100 - ally.getAlly().getWidth()/20));
+//                    }
+//                    break;
+//            }
+//        }
+//        //Check the collision between the blue ally with the player
+//
+//        //Check the collision between the player and the enemy
+//        if (enemy.collides((player.getBounds()))) {
+//            player.status = 3;
+//            enemy.status = 1;
+//            gameover = true;
+//            player.colliding = true;
+//        }
+//    }
+
+
         cam.update();   //this will tell lib gdx the camera has been repositioned
 
         //set the score value
@@ -193,7 +246,7 @@ public void update(float dt) {
         for(Ground ground : grounds) {
             sb.draw(ground.getTexture(), ground.getPosition().x, ground.getPosition().y, ground.getLength(), ground.getHeight());
         }
-        if (player.getStatus() == 1 || player.getStatus() == 2 || player.getWaveStatus() ==1) {
+        if (player.getStatus() == 1 || player.getStatus() == 2 || player.getStatus() == 4) {
             sb.draw(player.getTexture(), player.getPosition().x, player.getPosition().y);
         } else {
             sb.draw(player.getCollideTexture(), player.getPosition().x - 50, player.getGroundHeight() - 25);
@@ -205,15 +258,20 @@ public void update(float dt) {
             } else {
                 sb.draw(ally.getTexture(), ally.getPosAlly().x, ally.getPosAlly().y);
             }
-
         }
-
+        for (Enemy enemy : enemies) {
+            if (enemy.status == 1) {
+                sb.draw(enemy.getCollideTexture(), enemy.getPosEnemy().x + 50, enemy.getPosEnemy().y - 25);
+            } else {
+                sb.draw(enemy.getTexture(), enemy.getPosEnemy().x, enemy.getPosEnemy().y);
+            }
+        }
 
         if (gameover) {
             sb.draw(gameoverImg, cam.position.x - gameoverImg.getWidth() / 2, cam.position.y);
 
         }
-        //draw the score in the screen
+        //draw the score font in the screen
         font.draw(sb, myText, fontPosX , cam.viewportHeight - 50);
         sb.end();
     }
@@ -228,40 +286,28 @@ public void update(float dt) {
         for (Ally ally : allies) {
             ally.dispose();
         }
+        for (Enemy enemy : enemies) {
+            enemy.dispose();
+        }
         System.out.println("Play State Disposed");
     }
 
-    private void update_Ground_Bird() {
+    private void update_Ground() {
 
         //birdPositionX is the right border's position of the player
         float birdPositionX = player.getPosition().x + (player.getTexture().getRegionWidth()/playerFrameNum);
 
         //When the player stand on the new ground, setting the new player's ground height
-        if (birdPositionX >= ground1.getPosition().x) {
-            player.setGroundHeight(ground1.getHeight());
-            //Record which ground the player is staying on.
-            currentGroundNum = 1;
-        }
-        if (birdPositionX >= ground2.getPosition().x) {
-            System.out.print("birdPositionX = " + birdPositionX);
-            System.out.print("ground2.getPosition().x = " + ground2.getPosition().x);
-            player.setGroundHeight(ground2.getHeight());
-            currentGroundNum = 2;
-        }
-        if (birdPositionX >= ground3.getPosition().x) {
-            player.setGroundHeight(ground3.getHeight());
-            currentGroundNum = 3;
-        }
-        if (birdPositionX >= ground4.getPosition().x) {
-            player.setGroundHeight(ground4.getHeight());
-            currentGroundNum = 4;
-        }
-        if (birdPositionX >= ground5.getPosition().x) {
-            player.setGroundHeight(ground5.getHeight());
-            currentGroundNum = 5;
+        int groundNum = 0;
+        for (Ground ground : grounds) {
+            groundNum ++;
+            if (birdPositionX >= ground.getPosition().x) {
+                player.setGroundHeight(ground.getHeight());
+                currentGroundNum = groundNum;
+            }
         }
 
-        //Making sure the player would not fall down on the specific ground by setting the player's height
+        //Make sure the player would not fall down on the specific ground by setting the player's height
         for(Ground ground: grounds){
             if (birdPositionX > ground.getPosition().x + ground.getLength()) {
                 //player.setPositionY(0);

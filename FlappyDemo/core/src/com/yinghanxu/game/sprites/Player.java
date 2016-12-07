@@ -14,8 +14,7 @@ import com.yinghanxu.game.States.PlayState;
 
 public class Player {
     private static final int GRAVITY = -40;
-    private static final int MOVEMENT = 0;//500;
-    public static final int GROUND_Y_OFFSET = -100;
+    private static final int MOVEMENT = 500;
     private Vector3 position;
     private Vector3 velocity;
     private Rectangle bounds;
@@ -28,36 +27,28 @@ public class Player {
 
     private Texture player;
     private PlayState playState;
-    public int status = 1, waveStatus = 0; //1 means runing; 2 means jumping; 3 means colliding; 4 means waving the sword;
+    public int status = 1; //1 means runing; 2 means jumping; 3 means colliding; 4 means waving the sword;
+    public boolean waveStatus = false;
+    private int waveTime = 0; //calculate the waving sword time
     private Ground ground;
     public boolean colliding;
     public Vector3 getPosition() {
         return position;
     }
 
-    public void setPositionY(float y) {
-        //position.x = positionXYZ.x;
-        position.y = y;
-        //positionXYZ.z = positionXYZ.z;
-    }
-
     public TextureRegion getTexture() {
-        if (waveStatus == 1) {
-            return playerAnimationWave.getFrame();
-        }else {
-            if (status == 1) {
-                touchCount = 1;
-                return playerAnimationRun.getFrame();
-            } else if (status == 2) {
-                return playerAnimationJump.getFrame();
-            }
-        }
-//         else if (status == 4) {
+//        if (waveStatus) {
 //            return playerAnimationWave.getFrame();
 //        }
-//        } else if (status == 3) {
-//            return playerAnimationCollide.getFrame();
-//        }
+        if (status == 1) {
+            touchCount = 1;
+            return playerAnimationRun.getFrame();
+        } else if (status == 2) {
+            return playerAnimationJump.getFrame();
+        } else if (status == 4) {
+
+            return playerAnimationWave.getFrame();
+        }
         return playerAnimationRun.getFrame();
     }
 
@@ -76,7 +67,15 @@ public class Player {
         playerAnimationRun = new Animation(new TextureRegion(texture), runFrameNum, 0.5f);
         //playerAnimationJump = new Animation(new TextureRegion(textureJump), jumpFrameNum, 1f);
         playerAnimationCollide = new Animation(new TextureRegion(texture), runFrameNum, 0.1f);
-        //playerAnimationWave = new Animation(new TextureRegion(textureWave), waveFrameNum, 0.5f);
+        playerAnimationWave = new Animation(new TextureRegion(textureWave), waveFrameNum, 0.5f);
+//        if (status == 1) {
+//            //bounds = new Rectangle(x, y, textureWave.getWidth() / waveFrameNum, textureWave.getHeight());
+//            bounds = new Rectangle(x, y, texture.getWidth() / runFrameNum, texture.getHeight());
+//        } else if (status == 2) {
+//            bounds = new Rectangle(x, y, textureJump.getWidth() / jumpFrameNum, textureJump.getHeight());
+//        } else if (status == 4) {
+//            bounds = new Rectangle(x, y, textureWave.getWidth() / waveFrameNum, textureWave.getHeight());
+//        }
         bounds = new Rectangle(x, y, texture.getWidth() / runFrameNum , texture.getHeight());
         flap = Gdx.audio.newSound(Gdx.files.internal("sfx_wing.ogg"));
         colliding = false;
@@ -84,18 +83,31 @@ public class Player {
 
 
     public void update(float dt) {
-
-        if (waveStatus == 1) {
-            playerAnimationWave.update(dt);
-        } else {
+//        if (waveStatus) {
+//            playerAnimationWave.update(dt);
+//        } else {
             if (status == 1) {
+                bounds.setWidth(texture.getWidth() / runFrameNum);
+                bounds.setHeight(texture.getHeight());
                 playerAnimationRun.update(dt);
             } else if (status == 2) {
+                bounds.setWidth(textureJump.getWidth() / jumpFrameNum);
+                bounds.setHeight(textureJump.getHeight());
                 playerAnimationJump.update(dt);
             } else if (status ==3) {
                 playerAnimationCollide.update(dt);
+            } else if (status == 4) {
+                bounds.setWidth(textureWave.getWidth() / waveFrameNum);
+                bounds.setHeight(textureWave.getHeight());
+                waveTime++; //Calculate the waving sword time
+                playerAnimationWave.update(dt);
+                //Aftering spending out the waving time, change to the run status
+                if (waveTime % 50 == 0) {
+                    waveStatus = false;
+                }
+                System.out.println("waveTime = " + waveTime);
             }
-        }
+//        }
 
         velocity.add(0, GRAVITY, 0);
 
@@ -116,7 +128,12 @@ public class Player {
         }
 
         if (position.y == groundHeight) {
-            status = 1;
+            if (waveStatus) {
+                status = 4;
+            } else {
+                status = 1;
+            }
+            //status = 4;
         }
     }
 
@@ -129,14 +146,15 @@ public class Player {
     }
 
     public void wave() {
-        waveStatus = 1;
+        waveStatus = true;
+        status = 4;
         //velocity.y = 1500;
         playerAnimationWave = new Animation(new TextureRegion(textureWave), waveFrameNum, 1f);
     }
 
     public int getStatus(){ return status;}
 
-    public int getWaveStatus() { return waveStatus;}
+    public boolean getWaveStatus() { return waveStatus;}
 
     public Rectangle getBounds() {
         return bounds;

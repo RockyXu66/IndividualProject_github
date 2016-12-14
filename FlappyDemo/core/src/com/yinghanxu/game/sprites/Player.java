@@ -20,7 +20,7 @@ public class Player {
     private Rectangle bounds;
     private Animation playerAnimationRun, playerAnimationJump, playerAnimationCollide, playerAnimationWave;
     public Texture texture, textureJump, textureCollide, textureWave;
-    private int jumpFrameNum = 20, runFrameNum = 20, waveFrameNum = 3;
+    private int jumpFrameNum = 20, runFrameNum = 20, waveFrameNum = 7;
     private Sound flap;
     private int groundHeight = 700;
     public int touchCount = 1;
@@ -63,11 +63,11 @@ public class Player {
         texture = new Texture("player.png");
         textureJump = new Texture("1130jump.png");
         textureCollide = new Texture("die.png");
-        textureWave = new Texture("birdanimation.png");
+        textureWave = new Texture("playerwave.png");
         playerAnimationRun = new Animation(new TextureRegion(texture), runFrameNum, 0.5f);
         //playerAnimationJump = new Animation(new TextureRegion(textureJump), jumpFrameNum, 1f);
         playerAnimationCollide = new Animation(new TextureRegion(texture), runFrameNum, 0.1f);
-        playerAnimationWave = new Animation(new TextureRegion(textureWave), waveFrameNum, 0.5f);
+        playerAnimationWave = new Animation(new TextureRegion(textureWave), waveFrameNum, 0.1f);
 //        if (status == 1) {
 //            //bounds = new Rectangle(x, y, textureWave.getWidth() / waveFrameNum, textureWave.getHeight());
 //            bounds = new Rectangle(x, y, texture.getWidth() / runFrameNum, texture.getHeight());
@@ -102,7 +102,7 @@ public class Player {
                 waveTime++; //Calculate the waving sword time
                 playerAnimationWave.update(dt);
                 //Aftering spending out the waving time, change to the run status
-                if (waveTime % 200 == 0) {
+                if (waveTime % 15 == 0) {
                     waveStatus = false;
                 }
                 //System.out.println("waveTime = " + waveTime);
@@ -149,7 +149,7 @@ public class Player {
         waveStatus = true;
         status = 4; //4 means the waving animation
         //velocity.y = 1500;
-        playerAnimationWave = new Animation(new TextureRegion(textureWave), waveFrameNum, 1f);
+        playerAnimationWave = new Animation(new TextureRegion(textureWave), waveFrameNum, 0.2f);
     }
 
     public int getStatus(){ return status;}

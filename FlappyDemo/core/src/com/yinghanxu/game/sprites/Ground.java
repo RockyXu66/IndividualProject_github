@@ -46,7 +46,7 @@ public class Ground {
     }
 
     public void reposition(){
-        length = 400 + rand.nextInt(800);
+        length = 700 + rand.nextInt(800);
         groundGap = 100 + rand.nextInt(GROUND_MAX_GAP);
         switch (rand.nextInt(6)) {
             case 1:

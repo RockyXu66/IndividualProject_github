@@ -41,6 +41,7 @@ public class PlayState extends State{
     private Texture gameoverImg;
     private int playerFrameNum = 2;
     private int waveTime = 0;
+    private boolean waveStatus = false;
 
     Vector3 birdPosition;
 
@@ -191,13 +192,13 @@ public void update(float dt) {
                         break;
                 }
             }
-            if (ally.collides(player.getBounds())) {
-//                gsm.set(new PlayState(gsm));
-                player.status = 3;
-                ally.status = 1;
-                gameover = true;
-                player.colliding = true;
-            }
+//            if (ally.collides(player.getBounds())) {
+////                gsm.set(new PlayState(gsm));
+//                player.status = 3;
+//                ally.status = 1;
+//                gameover = true;
+//                player.colliding = true;
+//            }
 
         }
 
@@ -245,32 +246,52 @@ public void update(float dt) {
             //Check the collision between the blue ally with the player
 
             //Check whether the enemy have waved the sword and killed the player
-            if (enemy.collides((player.getBounds()))) {
-                if(enemy.status!= 3 ) {
-                    //enemy.status = 2;   //waving the sword;
-                    player.status = 3;
-                    enemy.status = 1;   //Aftering killing the player, the enemy changes the animation to running
-                    gameover = true;
-                    player.colliding = true;
-                }
-
-            }
+//            if (enemy.collides((player.getBounds()))) {
+//                if(enemy.status!= 3 ) {
+//                    //enemy.status = 2;   //waving the sword;
+//                    player.status = 3;
+//                    enemy.status = 1;   //Aftering killing the player, the enemy changes the animation to running
+//                    gameover = true;
+//                    player.colliding = true;
+//                }
+//
+//            }
             //System.out.println("enemyX = " + enemy.getPosEnemy().x + "; playerX = " + cam.position.x);
             //This is the distance which is used to determine whether the player kills the enemy;
-            if (java.lang.Math.abs(enemy.getPosEnemy().x -
-                    (player.getPosition().x + (player.getTexture().getRegionWidth() / playerFrameNum)+250)) < 5) {
-                if (player.status == 4) {
-                    enemy.status = 3; // 3 means the enemy is dead.
-                    score++;
+            if(player.status == 4){ // status 4 means the player is waving the sword
+                if (java.lang.Math.abs(enemy.getPosEnemy().x -
+                        (player.getPosition().x + (player.getTexture().getRegionWidth() / 7))) < 150) {
+            //        if (player.status == 4) {
+                        enemy.status = 3; // status 3 means the enemy is dead.
+                        score++;
+            //        }
                 }
             }
+
             //This is the distance which is used to determine whether the enemy should wave the sword and kill the player;
-            if (java.lang.Math.abs(enemy.getPosEnemy().x -
-                    (player.getPosition().x + (player.getTexture().getRegionWidth() / playerFrameNum)+200)) < 5) {
-                if(enemy.status!= 3 ) {
-                    enemy.status = 2;
+            System.out.println("player status: " + player.status);
+            if(!waveStatus){
+                System.out.println("====================================");
+                if (java.lang.Math.abs(enemy.getPosEnemy().x -
+                        (player.getPosition().x + (player.getTexture().getRegionWidth() / 20))) < 140) {
+                    if(enemy.status!= 3 ) {
+                        player.status = 3; //status 3 means the player is dead
+                        if(waveTime % 20 ==0 ){
+                            waveTime++;
+                            enemy.status = 1;
+                            waveStatus = false;
+                        }else {
+                            enemy.status = 2; // the enemy wave the sword
+                        }
+                        System.out.println("enemy status: " + enemy.status);
+
+                        gameover = true;
+                        player.colliding = true;
+
+                    }
                 }
             }
+
         }
 
 

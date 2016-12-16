@@ -192,13 +192,13 @@ public void update(float dt) {
                         break;
                 }
             }
-//            if (ally.collides(player.getBounds())) {
-////                gsm.set(new PlayState(gsm));
-//                player.status = 3;
-//                ally.status = 1;
-//                gameover = true;
-//                player.colliding = true;
-//            }
+            if (ally.collides(player.getBounds())) {
+//                gsm.set(new PlayState(gsm));
+                player.status = 3;
+                ally.status = 1;
+                gameover = true;
+                player.colliding = true;
+            }
 
         }
 
